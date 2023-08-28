@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import {Stack, useRouter} from "expo-router";
 import {View, Image, Text, Button, ButtonProps, Pressable} from "react-native";
 import {tw} from "../../util/utilities";
 import {} from "react-native-ui-lib";
@@ -43,6 +43,7 @@ export function GoodiesButton({ fontBold = true, ...props }: GoodiesButtonProps)
 export default function LanguageSelect() {
     const t = useIntl()
     const {locale, setLocale} = useContext(LanguageSwitcherContext)
+    const navigation = useRouter();
 
     return (<SafeAreaView style={tw`bg-white flex w-full h-full`}>
         <Stack.Screen options={{ headerShown: false }} />
@@ -68,7 +69,7 @@ export default function LanguageSelect() {
             <View style={tw`flex flex-row w-full justify-center items-center mb-8`}>
                 <GoodiesButton title={t.formatMessage({ id: 'languageSelector.next' })}
                                isPrimary={true}
-                               onPress={() => {}}
+                               onPress={() => navigation.push('/onboarding/enterPhoneNumber')}
                                size="lg"/>
             </View>
         </View>

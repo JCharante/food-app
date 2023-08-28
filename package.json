@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@expo/config-plugins": "~6.0.0",
+    "@expo/vector-icons": "^13.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-brands-svg-icons": "^6.2.0",
     "@fortawesome/free-regular-svg-icons": "^6.2.0",
@@ -24,7 +25,8 @@
     "@trpc/react-query": "^10.16.0",
     "@trpc/server": "^10.16.0",
     "@types/react": "~18.0.0",
-    "@types/react-native": "~0.69.1",
+    "@types/react-native": "^0.71.4",
+    "country-codes-list": "^1.6.10",
     "expo": "^48.0.9",
     "expo-constants": "~14.2.1",
     "expo-image-manipulator": "~11.1.1",
