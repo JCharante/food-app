@@ -1,24 +1,25 @@
 import {View, Text, RadioGroup, RadioButton} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {InternalTextField} from "../../../../components/InternalTextField";
 import {CardItem} from "../../../../components/CardItem";
 import {trpc} from "../../../../util/api";
+import {getName} from "../../../../util/utilities";
 
 
 
 export const EditAddonCategory = ({ navigation, route }) => {
-    const { addonCategoryID } = route.params
+    const { addonCategoryID, restaurantID } = route.params
     const [names, setNames] = useState<{[languageCode: string]: string}>({
         'en': '',
         'vi': ''
     })
 
     const [catType, setCatType] = useState<'pickOne' | 'multipleChoice'>('pickOne')
-    const { restaurantID } = route.params
     const addonCategoriesReq = trpc.getRestaurantAddonCategories.useQuery({ restaurantID })
+    const addonsReq = trpc.getRestaurantFoodAddons.useQuery({ restaurantID })
 
-    if (!addonCategoriesReq.data) return <View><Text>Loading...</Text></View>
+    if (!addonCategoriesReq.data || !addonsReq.data) return <View><Text>Loading...</Text></View>
 
     const addonCat = addonCategoriesReq.data.find((f) => f._id === addonCategoryID)
 
@@ -28,50 +29,95 @@ export const EditAddonCategory = ({ navigation, route }) => {
     }, [addonCat])
 
     const mutation = trpc.patchRestaurantFoodAddonCategory.useMutation()
+    const selectedAddons = useMemo(() => {
+        // addon is in addonCat's addons list
+        return addonsReq.data.filter((addon) => addonCat.addons.map((a) => a._id).includes(addon._id))
+    }, [addonsReq, addonCategoriesReq])
+
+    const unselectedAddons = useMemo(() => {
+        // addon is in addonCat's addons list
+        return addonsReq.data.filter((addon) => !addonCat.addons.map((a) => a._id).includes(addon._id))
+    }, [addonsReq, addonCategoriesReq])
+
+    const addAddon = async (addonID) => {
+        await mutation.mutateAsync({
+            restaurantID,
+            addonCategoryID,
+            addons: addonCat.addons.map((a) => a._id).concat(addonID)
+        })
+        await addonCategoriesReq.refetch()
+    }
+
+    const removeAddon = async (addonID) => {
+        await mutation.mutateAsync({
+            restaurantID,
+            addonCategoryID,
+            addons: addonCat.addons.map((a) => a._id).filter((a) => a !== addonID)
+        })
+        await addonCategoriesReq.refetch()
+    }
 
     return <ScrollView >
         <View padding-15>
-            {mutation.isLoading ? <Text>Loading...</Text> : (<>
-                {mutation.isSuccess ? <Text>Success</Text> : null}
-                {mutation.isError ? <Text>Error {mutation.error.message}</Text> : null}
-                <InternalTextField value={names['en']}
-                                   label='Name in English'
-                                   onChangeText={(v) => setNames({ ...names, 'en': v })}
-                                   maxLength={50}
-                />
-                <InternalTextField value={names['vi']}
-                                   label='Name in Vietnamese'
-                                   onChangeText={(v) => setNames({ ...names, 'vi': v })}
-                                   maxLength={50}
-                />
-                <RadioGroup
-                    initialValue={catType}
-                    onValueChange={setCatType}
-                    style={{ flexDirection: 'column', alignItems: 'flex-start' }}
-                >
-                    <RadioButton value="multipleChoice" label="Multiple Choice" />
-                    <RadioButton value="pickOne" label="Pick One" />
-                </RadioGroup>
+            <InternalTextField value={names['en']}
+                               label='Name in English'
+                               onChangeText={(v) => setNames({ ...names, 'en': v })}
+                               maxLength={50}
+            />
+            <InternalTextField value={names['vi']}
+                               label='Name in Vietnamese'
+                               onChangeText={(v) => setNames({ ...names, 'vi': v })}
+                               maxLength={50}
+            />
+            <RadioGroup
+                initialValue={catType}
+                onValueChange={setCatType}
+                style={{ flexDirection: 'column', alignItems: 'flex-start' }}
+            >
+                <RadioButton value="multipleChoice" label="Multiple Choice" />
+                <RadioButton value="pickOne" label="Pick One" />
+            </RadioGroup>
 
-                <CardItem label='Save'
-                          disable={mutation.isLoading || mutation.isSuccess}
-                          color='action'
-                          onPress={() => { mutation.mutate({
-                              restaurantID,
-                              addonCategoryID,
-                              names,
-                              type: catType
-                          }) }}/>
-                <View style={{ height: 20 }}></View>
-                {/* https://stackoverflow.com/a/61611734 */}
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
-                    <View>
-                        <Text style={{width: 50, textAlign: 'center'}}>Addons</Text>
-                    </View>
-                    <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
+            <CardItem label='Save'
+                      color='action'
+                      onPress={() => { mutation.mutate({
+                          restaurantID,
+                          addonCategoryID,
+                          names,
+                          type: catType
+                      }) }}/>
+            <View style={{ height: 20 }}></View>
+            {/* https://stackoverflow.com/a/61611734 */}
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
+                <View>
+                    <Text style={{width: 50, textAlign: 'center'}}>Addons</Text>
                 </View>
-            </>)}
+                <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
+            </View>
+            {selectedAddons.map((a) => <CardItem key={a._id}>
+                <View padding-15>
+                    <Text>{getName(a.names)}</Text>
+                </View>
+                <View flex right>
+                    <Text style={{ color: 'red' }}
+                          onPress={() => removeAddon(a._id)}>
+                        Remove
+                    </Text>
+                </View>
+            </CardItem>)}
+            {unselectedAddons.map((a) => <CardItem key={a._id}>
+                    <View padding-15>
+                        <Text>{getName(a.names)}</Text>
+                    </View>
+                    <View flex right>
+                        <Text style={{ color: 'green' }}
+                              onPress={() => addAddon(a._id)}>
+                            Add
+                        </Text>
+                    </View>
+                </CardItem>)}
+
 
         </View>
     </ScrollView>
