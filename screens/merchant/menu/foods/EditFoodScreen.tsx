@@ -1,6 +1,6 @@
 import {View, Text, Incubator, Card, Button} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
-import {KeyboardAvoidingView} from "react-native";
+import {KeyboardAvoidingView, Platform} from "react-native";
 import {useContext, useEffect, useState} from "react";
 import {TokenContext} from "../../../../util/tokenContext";
 import {RestaurantContext} from "../../../../util/restaurantContext";
@@ -11,6 +11,9 @@ import {inferRouterOutputs} from "@trpc/server";
 import {InternalTextField} from "../../../../components/InternalTextField";
 import {CardItem} from "../../../../components/CardItem";
 import {NameMap} from "../../../../util/types";
+import * as ImagePicker from "expo-image-picker";
+import {manipulateAsync, SaveFormat} from "expo-image-manipulator";
+import {useRefetchOnFocus} from "../../../../util/hooks";
 
 const { TextField } = Incubator
 
@@ -27,8 +30,11 @@ export const EditFoodScreen = ({ route }) => {
     const [price, setPrice] = useState(0)
 
     const foodItemsReq = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
+    useRefetchOnFocus(foodItemsReq.refetch)
     const addonCatsReq = trpc.getRestaurantAddonCategories.useQuery({ restaurantID })
+    useRefetchOnFocus(addonCatsReq.refetch)
     const foodItemMutation = trpc.patchRestaurantFoodItem.useMutation()
+    const putImageMutation = trpc.requestPutFoodItemPicture.useMutation()
 
     const foodItem = foodItemsReq.data.find((f) => f._id === foodItemID)
 
@@ -74,6 +80,54 @@ export const EditFoodScreen = ({ route }) => {
         await foodItemsReq.refetch()
     }
 
+    const newPictureFlow = async () => {
+        let pickerResult = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 4],
+            quality: 1
+        });
+
+        if (pickerResult.assets.length === 0) return
+
+        const img = await manipulateAsync(
+            pickerResult.assets[0].uri,
+            [{ resize: { width: 500 } }],
+            { format: SaveFormat.JPEG, compress: 1, base64: false }
+        )
+
+        const url = await putImageMutation.mutateAsync({ restaurantID, foodItemID: foodItem._id })
+
+        const localUri = img.uri;
+        const fileExtension = localUri.split('.').pop();
+        const mimeType = `image/${fileExtension === 'jpg' ? 'jpeg' : fileExtension}`;
+
+        // Append the file to the FormData instance
+        if (Platform.OS === 'android') {
+            console.error('Uploading from android not yet supported')
+        } else {
+            const response = await fetch(localUri);
+            const blob = await response.blob();
+
+
+            const uploadResponse = await fetch(url, {
+                method: 'PUT',
+                body: blob,
+                headers: {
+                    'Content-Type': mimeType,
+                },
+            });
+
+            if (uploadResponse.ok) {
+                console.log('Image uploaded successfully');
+                await foodItemsReq.refetch()
+            } else {
+                const errorText = await uploadResponse.text();
+                console.error('Error uploading image', errorText);
+            }
+        }
+    };
+
     const content = () => <KeyboardAvoidingView>
         <ScrollView>
             <View padding-15 flex>
@@ -110,6 +164,10 @@ export const EditFoodScreen = ({ route }) => {
                                    validate={'number'}
                                    onChangeText={(v) => v === '' ? setPrice(0) : setPrice(parseInt(v))}
                 />
+                <CardItem label="Upload Picture"
+                          color="action"
+                          onPress={newPictureFlow}
+                          />
                 <CardItem label="Save Changes"
                           color="action"
                           onPress={() => {
