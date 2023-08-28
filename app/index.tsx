@@ -16,8 +16,11 @@ export const Index = () => {
             const value = await AsyncStorage.getItem('token')
             setToken(value)
             if(value === null) {
-                navigation.push('/login')
+                // Must be first launch
+                // TODO: redirec twithout allowing back button
+                navigation.push('/onboarding/languageSelect')
             } else {
+                // TODO: check if token is valid / expired
                 setToken(value)
                 // TODO: redirect without allowing back button
                 navigation.push('/home')

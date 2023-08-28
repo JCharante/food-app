@@ -7,9 +7,11 @@ import {RestaurantContext} from "../util/restaurantContext";
 import {registerRootComponent} from "expo";
 import {StyleSheet} from "react-native";
 import { Stack, usePathname } from "expo-router"
-import {IRefetchContext, RefetchContext} from "../util/hooks";
+import {IRefetchContext, LanguageSwitcherContext, RefetchContext} from "../util/hooks";
 import en from "../translations/en.json";
+import vi from "../translations/vi.json"
 import {IntlProvider} from "react-intl";
+import { getLocales } from 'expo-localization'
 
 export default function App() {
     const pathname = usePathname();
@@ -27,7 +29,14 @@ export default function App() {
         }),
     );
 
-    const locale = "en" // TODO: use https://docs.expo.dev/guides/localization/
+    // TODO: save locale to async storage to persist between app launches
+    const [locale, setLocale] = useState(() => {
+        const deviceLanguage = getLocales()[0].languageCode
+        if (!deviceLanguage.startsWith("en") && !deviceLanguage.startsWith("vi")) {
+            return "en"
+        }
+        return deviceLanguage.split('-')[0]
+    })
 
 
     const [refetchDetails, setRefetchDetails] = useState<IRefetchContext>({
@@ -75,10 +84,12 @@ export default function App() {
                 <TokenContext.Provider value={{ token, setToken }}>
                     <RestaurantContext.Provider value={{ restaurant, setRestaurant }}>
                         <RefetchContext.Provider value={refetchDetails}>
-                            <IntlProvider locale={locale} messages={en}>
-                                <Stack>
-                                    <Stack.Screen name="modal" options={{presentation: "modal"}}/>
-                                </Stack>
+                            <IntlProvider locale={locale} messages={locale === 'en' ? en : vi}>
+                                <LanguageSwitcherContext.Provider value={{locale, setLocale}}>
+                                    <Stack>
+                                        <Stack.Screen name="modal" options={{presentation: "modal"}}/>
+                                    </Stack>
+                                </LanguageSwitcherContext.Provider>
                             </IntlProvider>
                         </RefetchContext.Provider>
                     </RestaurantContext.Provider>

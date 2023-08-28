@@ -36,3 +36,13 @@ export const useRefetch = (requests) => {
         }
     }, [url, hasRefetched])
 }
+
+export interface ILanguageSwitcherContext {
+    locale: string,
+    setLocale: (language: string) => void,
+}
+
+export const LanguageSwitcherContext = React.createContext<ILanguageSwitcherContext>({
+    locale: '',
+    setLocale: (locale: string) => {}
+})
