@@ -33,6 +33,7 @@ export const getMenuCategories = async (token, restaurantID): Promise<Array<IMen
         return data
     } else {
         console.error(response) // log this?
+        return []
         throw (response)
     }
 }
@@ -50,6 +51,7 @@ export const getRestaurantFoodItems = async (token, restaurantID): Promise<Array
         return data
     } else {
         console.error(response) // log this?
+        return []
         throw (response)
     }
 }

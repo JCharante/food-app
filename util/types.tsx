@@ -7,6 +7,10 @@ export interface IGetUserRestaurantsObject {
 export interface IFoodItem {
     _id: string
     name: string
+    englishName: string | null
+    description: string
+    englishDescription: string | null,
+    price: number
 }
 
 export interface IMenuCategory {
