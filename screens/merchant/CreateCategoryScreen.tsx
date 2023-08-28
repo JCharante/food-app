@@ -3,6 +3,7 @@ import {ScrollView} from "react-native-gesture-handler";
 import {useState} from "react";
 import {CardItem} from "../../components/CardItem";
 import {trpc} from "../../util/api";
+import {InternalTextField} from "../../components/InternalTextField";
 
 const { TextField } = Incubator
 
@@ -21,16 +22,14 @@ export const CreateCategoryScreen = ({ navigation, route }) => {
             {mutation.isLoading ? <Text>Loading...</Text> : (<>
                 {mutation.isSuccess ? <Text>Success</Text> : null}
                 {mutation.isError ? <Text>Error {mutation.error.message}</Text> : null}
-                <TextField value={names['en']}
+                <InternalTextField value={names['en']}
                            label='English'
                            onChangeText={(v) => setNames({ ...names, 'en': v })}
-                           showCharCounter
                            maxLength={50}
                 />
-                <TextField value={names['vi']}
+                <InternalTextField value={names['vi']}
                            label='Vietnamese'
                            onChangeText={(v) => setNames({ ...names, 'vi': v })}
-                           showCharCounter
                            maxLength={50}
                 />
                 <CardItem label='Create'

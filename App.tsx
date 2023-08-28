@@ -14,7 +14,6 @@ import { UpdateMenuScreen } from './screens/merchant/UpdateMenuScreen';
 import {UpdateCategoryScreen} from "./screens/merchant/UpdateCategoryScreen";
 import {RestaurantContext} from "./util/restaurantContext";
 import { EditFoodScreen } from './screens/merchant/EditFoodScreen';
-// import { PickCategoriesScreen } from './screens/merchant/PickCategoriesScreen';
 import { CreateCategoryScreen } from "./screens/merchant/CreateCategoryScreen";
 import { AllFoodsScreen } from "./screens/merchant/AllFoodsScreen";
 
@@ -127,9 +126,6 @@ export default function App() {
                               <Stack.Screen name="EditFoodScreen"
                                             component={EditFoodScreen}
                                             options={{ title: 'Update Food' }}/>
-                              {/*<Stack.Screen name="PickCategories"*/}
-                              {/*              component={PickCategoriesScreen}*/}
-                              {/*              options={{ title: 'Pick Categories' }}/>*/}
                           </Stack.Navigator>
                       </NavigationContainer>
                   </RestaurantContext.Provider>
