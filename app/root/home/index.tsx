@@ -26,13 +26,13 @@ import IconVeganModeOn from "../../../assets/custom-icons/veganMode.svg"
 import IconVeganModeOff from "../../../assets/custom-icons/vegetarianMode.svg"
 import {trpc} from "../../../util/api";
 import {useEffect, useMemo, useState} from "react";
-import {getName, tw} from "../../../util/utilities";
+import {getName, tw, twConfig} from "../../../util/utilities";
 import {useIntl} from "react-intl";
 import {GoodiesSearchInput} from "../../../components/GoodiesSearchInput";
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../../util/store'
 import { toggleVeganMode } from '../../../util/customerHomeSlice';
-
+import { MaterialIcons } from '@expo/vector-icons';
 
 type IconNames = 'nearby' | 'brunch' | 'burger' | 'chinese' | 'coffee' | 'dessert' | 'health' | 'indian' | 'italian' | 'japanese' | 'juice' | 'korean' | 'pizza' | 'thai' | 'vietnam' | 'western'
 
@@ -139,9 +139,33 @@ export default function HomeIndex() {
 
     const displayedAddress = reverseGeoEncodeReq.data && reverseGeoEncodeReq.data.length > 0 ? reverseGeoEncodeReq.data[0].name : 'Pick Address'
 
-    const veganModeSelector = (<Pressable onPress={() => dispatch(toggleVeganMode())}>
+    const veganModeSelector = (<View>
+        <Pressable onPress={() => dispatch(toggleVeganMode())}>
         {veganMode ? <IconVeganModeOn/> : <IconVeganModeOff/>}
-    </Pressable>)
+        </Pressable>
+        <View style={tw`z-10 absolute bg-white -bottom-10 -left-10 w-[73px] rounded-md`}>
+            <View
+                style={tw.style({
+                    width: 0,
+                    height: 0,
+                    backgroundColor: 'transparent',
+                    borderStyle: 'solid',
+                    borderLeftWidth: 10,
+                    borderRightWidth: 10,
+                    borderBottomWidth: 10,
+                    borderLeftColor: 'transparent',
+                    borderRightColor: 'transparent',
+                    borderBottomColor: 'white',
+                    marginTop: -20,
+                    alignSelf: 'center'
+                }, `absolute top-3 right-2`)}
+            />
+            <View style={tw`p-1 flex flex-row items-center justify-center`}>
+                <Text style={tw`text-neutral-600 font-medium p-1 text-xs`}>{veganMode ? 'Vegan' : 'Vegetarian'}</Text>
+                <MaterialIcons name="info-outline" size={20} color={twConfig.theme.colors.neutral[600]} />
+            </View>
+        </View>
+        </View>)
 
     return (
         <SafeAreaView style={tw`flex flex-1`}>
