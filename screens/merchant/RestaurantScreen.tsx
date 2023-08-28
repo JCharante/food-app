@@ -1,32 +1,21 @@
 import {View, Text} from "react-native-ui-lib";
-import {useContext, useEffect, useState} from "react";
-import {TokenContext} from "../../util/tokenContext";
-import {Pressable} from "react-native";
-import {RestaurantContext} from "../../util/restaurantContext";
 import {CardItem} from "../../components/CardItem";
-import {getUserRestaurants} from "@goodies-tech/api";
 import {getName} from "../../util/utilities";
+import {trpc} from "../../util/api";
 
 export const RestaurantScreen = ({ navigation, route  }) => {
-    const { token } = useContext(TokenContext)
-    const { restaurant, setRestaurant } = useContext(RestaurantContext)
+    const restaurantID = route.params.restaurantID
+    const restaurants = trpc.userGetRestaurants.useQuery()
+    if (!restaurants.data) return <View><Text>Loading...</Text></View>
 
-    useEffect(() => {
-        // Fetch data on page load / when token changes
-        (async () => {
-            if (token === '') return
+    const data = restaurants.data
 
-            const data = await getUserRestaurants(token)
-            const shop = data[data.findIndex((r) => r._id.toString() === restaurant._id.toString())]
-            setRestaurant(shop)
-        })()
-    }, [token])
-
+    const shop = data[data.findIndex((r) => r._id.toString() === restaurantID)]
 
     return <View padding-10>
-        <Text>Restaurant Name: {getName(restaurant.names, 'en')}</Text>
-        <Text>Address: {restaurant.address}</Text>
+        <Text>Restaurant Name: {getName(shop.names, 'en')}</Text>
+        <Text>Address: {shop.address}</Text>
 
-        <CardItem onPress={() => { navigation.navigate('UpdateMenu') }} label="Edit Menu"/>
+        <CardItem onPress={() => { navigation.navigate('UpdateMenu', { restaurantID }) }} label="Edit Menu"/>
     </View>
 }

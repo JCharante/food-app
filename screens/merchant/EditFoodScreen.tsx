@@ -4,54 +4,87 @@ import {KeyboardAvoidingView} from "react-native";
 import {useContext, useEffect, useState} from "react";
 import {TokenContext} from "../../util/tokenContext";
 import {RestaurantContext} from "../../util/restaurantContext";
-import {getRestaurantFoodItems, IFoodItemAPI} from "@goodies-tech/api";
+import {AppRouter } from "@goodies-tech/api";
 import {getName} from "../../util/utilities";
+import {trpc} from "../../util/api";
+import {inferRouterOutputs} from "@trpc/server";
+import {InternalTextField} from "../../components/InternalTextField";
+import {CardItem} from "../../components/CardItem";
 
 const { TextField } = Incubator
 
 export const EditFoodScreen = ({ route }) => {
-    const { food } = route.params
-    const foodID = food._id
-    const [foodItem, setFoodItem] = useState<IFoodItemAPI | null>(null)
-    const { token } = useContext(TokenContext)
-    const { restaurant } = useContext(RestaurantContext)
+    const { foodItemID, restaurantID } = route.params
+    const [names, setNames] = useState({
+        'en': '',
+        'vi': ''
+    })
+    const [descriptions, setDescriptions] = useState({
+        'en': '',
+        'vi': ''
+    })
+    const [price, setPrice] = useState(0)
+    type RouterOutput = inferRouterOutputs<AppRouter>
+    type ArrElement<ArrType> = ArrType extends readonly (infer ElementType)[]
+        ? ElementType
+        : never;
 
-    const fetchFoodItem = async () => {
-        console.log(`Fetching data for EditFoodScreen/${foodID}`)
-        const data = await getRestaurantFoodItems(token, restaurant._id);
-        setFoodItem(data.find((f) => f._id === foodID))
-    }
+    const foodItemsReq = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
+    const foodItemMutation = trpc.patchRestaurantFoodItem.useMutation()
+
+    if (!foodItemsReq.data) return <View><Text>Loading...</Text></View>
+
+    const foodItem = foodItemsReq.data.find((f) => f._id === foodItemID)
+
+    if (foodItem === undefined) return <View><Text>An error occured.</Text></View>
 
     useEffect(() => {
-        Promise.all([fetchFoodItem()])
-    }, [])
+        console.log(foodItem)
+        setNames(foodItem.names)
+        setDescriptions(foodItem.descriptions)
+        setPrice(foodItem.price)
+    }, [foodItem])
 
     const content = () => <KeyboardAvoidingView>
         <ScrollView>
             <View padding-15 flex>
-                { Object.keys(foodItem.names).map((lang) => {
-                    return <TextField value={foodItem.names[lang]}
-                                      label={lang}
-                                      onChangeText={(v) => setFoodItem({ ...foodItem, names: { ...foodItem.names, [lang]: v } })}
-                                      showCharCounter
-                                      maxLength={50}
-                                      />
-                })}
-                { Object.keys(foodItem.descriptions).map((lang) => {
-                    return <TextField value={foodItem.descriptions[lang]}
-                                      label={lang}
-                                      onChangeText={(v) => setFoodItem({ ...foodItem, descriptions: { ...foodItem.descriptions, [lang]: v } })}
-                                      showCharCounter
-                                      maxLength={200}
-                                      />
-                })}
-                <TextField value={foodItem.price.toString()}
-                           label="Price"
-                           validate={'number'}
-                           onChangeText={(v) => setFoodItem({ ...foodItem, price: parseInt(v) })}
-                           showCharCounter
-                           maxLength={20}
-                           />
+                <InternalTextField value={names['en']}
+                                   label='Name in English'
+                                   onChangeText={(v) => setNames({ ...names, 'en': v })}
+                                   maxLength={50}
+                />
+                <InternalTextField value={names['vi']}
+                                   label='Name in Vietnamese'
+                                   onChangeText={(v) => setNames({ ...names, 'vi': v })}
+                                   maxLength={50}
+                />
+                <InternalTextField value={descriptions['en']}
+                                   label='Description in English'
+                                   onChangeText={(v) => setDescriptions({ ...descriptions, 'en': v })}
+                                   maxLength={200}
+                />
+                <InternalTextField value={descriptions['vi']}
+                                   label='Description in Vietnamese'
+                                   onChangeText={(v) => setDescriptions({ ...descriptions, 'vi': v })}
+                                   maxLength={200}
+                />
+                <InternalTextField value={price.toString()}
+                                   label="Price"
+                                   validate={'number'}
+                                   onChangeText={(v) => v === '' ? setPrice(0) : setPrice(parseInt(v))}
+                />
+                <CardItem label="Save Changes"
+                          color="action"
+                          onPress={() => {
+                                foodItemMutation.mutate({
+                                    restaurantID,
+                                    foodItemID,
+                                    names,
+                                    descriptions,
+                                    price
+                                })
+                          }}
+                />
             </View>
         </ScrollView>
     </KeyboardAvoidingView>

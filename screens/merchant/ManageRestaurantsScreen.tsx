@@ -1,38 +1,30 @@
 import {Card, View, Text} from "react-native-ui-lib";
 import {useContext, useEffect, useState} from "react";
-import { getUserRestaurants } from '@goodies-tech/api'
-import {TokenContext} from "../../util/tokenContext";
 import {RestaurantContext} from "../../util/restaurantContext";
-import {IRestaurantV1} from "@goodies-tech/api";
 import {getName} from "../../util/utilities";
+import { trpc } from '../../util/api'
 
 export const ManageRestaurantsScreen = ({ navigation }) => {
-    const { token } = useContext(TokenContext)
     const { setRestaurant } = useContext(RestaurantContext)
-    const [restaurants, setRestaurants] = useState<Array<IRestaurantV1>>([])
 
-    useEffect(() => {
-        // Fetch data on page load / when token changes
-        (async () => {
-            if (token === '') return
+    const restaurants = trpc.userGetRestaurants.useQuery()
+    if (!restaurants.data) return <View><Text>Loading...</Text></View>
 
-            const data = await getUserRestaurants(token)
-            setRestaurants(data)
-        })()
-    }, [token])
 
     return <View padding-10>
         <Text>Your Restaurants:</Text>
         <View marginT-10>
-        {restaurants.map((restaurant) => {
-            return <Card key={restaurant._id.toString()}
+        {restaurants.data.map((restaurant) => {
+            return <Card key={restaurant._id}
                          style={{ marginBottom: 10 }}
                          row
                          height={90}
                          borderRadius={20}
                          onPress={() => {
                              setRestaurant(restaurant)
-                             navigation.navigate('Restaurant')}
+                             navigation.navigate('Restaurant', {
+                                 restaurantID: restaurant._id
+                             })}
                          }
             >
                 <Card.Section imageSource={{ url: 'https://placekitten.com/250/250'}}

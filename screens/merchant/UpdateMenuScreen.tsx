@@ -1,30 +1,18 @@
 import {View, Text, Card} from "react-native-ui-lib";
-import {useContext, useEffect, useState} from "react";
-import {TokenContext} from "../../util/tokenContext";
-import {getMenuCategories, IMenuCategoryAPI, getRestaurantFoodItems, IFoodItemAPI} from '@goodies-tech/api'
 import {ScrollView} from "react-native-gesture-handler";
-import {RestaurantContext} from "../../util/restaurantContext";
 import { CardItem } from "../../components/CardItem";
 import {getName} from "../../util/utilities";
+import {trpc} from "../../util/api";
+import {inferRouterOutputs} from "@trpc/server";
+import {AppRouter} from "@goodies-tech/api";
 
 export const UpdateMenuScreen = ({ navigation, route }) => {
-    const { token } = useContext(TokenContext)
-    const { restaurant } = useContext(RestaurantContext)
-    const [categories, setCategories] = useState<IMenuCategoryAPI[]>([])
-    const [foodItems, setFoodItems] = useState<IFoodItemAPI[]>([])
-    useEffect(() => {
-        // Fetch data on page load / when token changes
-        (async () => {
-            if (token === '') return
-            // TODO: make these requests in parallel
-            const categoryData = await getMenuCategories(token, restaurant._id)
-            const foodData = await getRestaurantFoodItems(token, restaurant._id)
-            console.log(JSON.stringify(categoryData))
-            console.log(JSON.stringify(foodData))
-            setCategories(categoryData)
-            setFoodItems(foodData)
-        })()
-    }, [token])
+    const restaurantID = route.params.restaurantID
+    type RouterOutput = inferRouterOutputs<AppRouter>
+    const categories: RouterOutput['getRestaurantCategories'] = trpc.getRestaurantCategories.useQuery({ restaurantID })
+    const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
+
+    if (!categories.data || !foodItems.data) return <View><Text>Loading...</Text></View>
 
     return <ScrollView >
         <View padding-15>
@@ -48,7 +36,7 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
             </Text>
             <View marginT-10>
                 <Text style={{ fontSize: 20 }}>Categories:</Text>
-                {categories.map((cat) => {
+                {categories.data.map((cat) => {
                     return <Card key={cat._id}
                                  style={{ marginBottom: 5, marginTop: 5 }}
                                  row
@@ -57,7 +45,8 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                                  onPress={() => navigation.navigate(
                                      'UpdateCategoryScreen',
                                      {
-                                         category: cat
+                                         restaurantID: restaurantID,
+                                         categoryID: cat._id
                                      }
                                  )}
                     >
@@ -68,10 +57,17 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                 })}
                 <CardItem
                     label="Pick Categories"
+                    color="action"
                     onPress={() => navigation.navigate('PickCategories')}
                 ></CardItem>
+                <CardItem
+                    label="Create Category"
+                    color="action"
+                    onPress={() => navigation.navigate('CreateCategory', { restaurantID })}
+                ></CardItem>
                 <Text style={{ fontSize: 20 }}>Food:</Text>
-                {foodItems.map((food) => {
+                <Text>Food will only show the menu if it is added to a category.</Text>
+                {foodItems.data.map((food) => {
                     return <CardItem key={food._id}>
                         <View padding-15 flex>
                             <Text>{getName(food.names, 'en')}</Text>
@@ -81,12 +77,18 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                             <Text onPress={() => navigation.navigate(
                                 'EditFoodScreen',
                                 {
-                                    food: food
+                                    restaurantID,
+                                    foodItemID: food._id
                                 }
                             )}>Edit</Text>
                         </View>
                     </CardItem>
                 })}
+                <CardItem
+                    label="Create Food"
+                    color="action"
+                    onPress={() => navigation.navigate('CreateFood', { restaurantID })}
+                />
             </View>
         </View>
     </ScrollView>
