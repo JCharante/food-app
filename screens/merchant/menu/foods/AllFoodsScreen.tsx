@@ -1,8 +1,8 @@
 import {View, Text} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
-import { CardItem } from "../../components/CardItem";
-import {getName} from "../../util/utilities";
-import {trpc} from "../../util/api";
+import { CardItem } from "../../../../components/CardItem";
+import {getName} from "../../../../util/utilities";
+import {trpc} from "../../../../util/api";
 export const AllFoodsScreen = ({ navigation, route }) => {
     const restaurantID = route.params.restaurantID
     const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID })

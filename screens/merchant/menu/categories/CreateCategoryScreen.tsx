@@ -1,9 +1,9 @@
 import {View, Text, Incubator} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import {useState} from "react";
-import {CardItem} from "../../components/CardItem";
-import {trpc} from "../../util/api";
-import {InternalTextField} from "../../components/InternalTextField";
+import {CardItem} from "../../../../components/CardItem";
+import {trpc} from "../../../../util/api";
+import {InternalTextField} from "../../../../components/InternalTextField";
 
 const { TextField } = Incubator
 

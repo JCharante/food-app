@@ -1,13 +1,13 @@
 import {View, Text, Card} from "react-native-ui-lib";
-import {RestaurantContext} from "../../util/restaurantContext";
+import {RestaurantContext} from "../../../../util/restaurantContext";
 import {useContext, useEffect, useState} from "react";
-import {TokenContext} from "../../util/tokenContext";
+import {TokenContext} from "../../../../util/tokenContext";
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons'
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {CardItem} from "../../components/CardItem";
+import {CardItem} from "../../../../components/CardItem";
 import {ScrollView} from "react-native-gesture-handler";
-import {getName} from "../../util/utilities";
-import {trpc} from "../../util/api";
+import {getName} from "../../../../util/utilities";
+import {trpc} from "../../../../util/api";
 
 export const UpdateCategoryScreen = ({ navigation, route }) => {
     const { categoryID, restaurantID } = route.params

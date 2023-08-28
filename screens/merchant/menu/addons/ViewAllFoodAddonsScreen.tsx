@@ -1,9 +1,9 @@
 import {View, Text} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
-import { CardItem } from "../../components/CardItem";
-import {getName} from "../../util/utilities";
-import {trpc} from "../../util/api";
-import {useRefetchOnFocus} from "../../util/hooks";
+import { CardItem } from "../../../../components/CardItem";
+import {getName} from "../../../../util/utilities";
+import {trpc} from "../../../../util/api";
+import {useRefetchOnFocus} from "../../../../util/hooks";
 
 export const ViewAllFoodAddonsScreen = ({ navigation, route }) => {
     const restaurantID = route.params.restaurantID

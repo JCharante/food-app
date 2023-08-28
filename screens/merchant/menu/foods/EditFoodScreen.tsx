@@ -2,14 +2,14 @@ import {View, Text, Incubator} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import {KeyboardAvoidingView} from "react-native";
 import {useContext, useEffect, useState} from "react";
-import {TokenContext} from "../../util/tokenContext";
-import {RestaurantContext} from "../../util/restaurantContext";
+import {TokenContext} from "../../../../util/tokenContext";
+import {RestaurantContext} from "../../../../util/restaurantContext";
 import {AppRouter } from "@goodies-tech/api";
-import {getName} from "../../util/utilities";
-import {trpc} from "../../util/api";
+import {getName} from "../../../../util/utilities";
+import {trpc} from "../../../../util/api";
 import {inferRouterOutputs} from "@trpc/server";
-import {InternalTextField} from "../../components/InternalTextField";
-import {CardItem} from "../../components/CardItem";
+import {InternalTextField} from "../../../../components/InternalTextField";
+import {CardItem} from "../../../../components/CardItem";
 
 const { TextField } = Incubator
 

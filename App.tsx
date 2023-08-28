@@ -9,21 +9,21 @@ import { HomeScreen } from "./screens/merchant/HomeScreen";
 import { TokenContext } from './util/tokenContext'
 import { ManageRestaurantsScreen } from './screens/merchant/ManageRestaurantsScreen';
 import { RestaurantScreen } from './screens/merchant/RestaurantScreen';
-import { UpdateMenuScreen } from './screens/merchant/UpdateMenuScreen';
-import {UpdateCategoryScreen} from "./screens/merchant/UpdateCategoryScreen";
+import { UpdateMenuScreen } from './screens/merchant/menu/UpdateMenuScreen';
+import {UpdateCategoryScreen} from "./screens/merchant/menu/categories/UpdateCategoryScreen";
 import {RestaurantContext} from "./util/restaurantContext";
-import { EditFoodScreen } from './screens/merchant/EditFoodScreen';
-import { CreateCategoryScreen } from "./screens/merchant/CreateCategoryScreen";
-import { AllFoodsScreen } from "./screens/merchant/AllFoodsScreen";
+import { EditFoodScreen } from './screens/merchant/menu/foods/EditFoodScreen';
+import { CreateCategoryScreen } from "./screens/merchant/menu/categories/CreateCategoryScreen";
+import { AllFoodsScreen } from "./screens/merchant/menu/foods/AllFoodsScreen";
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
 import { trpc } from './util/api';
 import {registerRootComponent} from "expo";
-import { CreateFoodScreen } from './screens/merchant/CreateFoodScreen';
-import { CreateFoodAddonScreen } from './screens/merchant/CreateFoodAddonScreen';
-import {ViewAllFoodAddonsScreen} from "./screens/merchant/ViewAllFoodAddonsScreen";
+import { CreateFoodScreen } from './screens/merchant/menu/foods/CreateFoodScreen';
+import { CreateFoodAddonScreen } from './screens/merchant/menu/addons/CreateFoodAddonScreen';
+import {ViewAllFoodAddonsScreen} from "./screens/merchant/menu/addons/ViewAllFoodAddonsScreen";
 import {CreateFoodAddonCategoryScreen} from "./screens/merchant/menu/addons/CreateFoodAddonCategoryScreen";
 import {EditAddonCategory} from "./screens/merchant/menu/addons/EditAddonCategory";
 
