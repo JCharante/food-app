@@ -1,13 +1,13 @@
-import {Stack, useRouter} from "expo-router";
-import {formatPrice, getName, useParamFetcher} from "../../util/utilities";
+import {inferRouterOutputs} from "@trpc/server";
+import {AppRouter} from "@goodies-tech/api";
+import {formatPrice, getName, tw, useParamFetcher} from "../../../util/utilities";
+import {Link, Stack, useNavigation, useRouter} from "expo-router";
+import {trpc} from "../../../util/api";
+import {useRefetchOnFocus} from "../../../util/hooks";
+import {ScrollView} from "react-native-gesture-handler";
+import React from "react";
 import { View, Image } from "react-native"
 import {Text} from "react-native-ui-lib";
-import {trpc} from "../../util/api";
-import {ScrollView} from "react-native-gesture-handler";
-import { tw } from '../../util/utilities'
-import {AppRouter} from "@goodies-tech/api";
-import {inferRouterOutputs} from "@trpc/server";
-import {useRefetchOnFocus} from "../../util/hooks";
 
 type RouterOutput = inferRouterOutputs<AppRouter>
 
@@ -16,18 +16,21 @@ interface IMenuFoodComponentProps {
 }
 
 function MenuFoodComponent(props: IMenuFoodComponentProps) {
+    const { restaurantID } = useParamFetcher() // replace this with something passed from parent component
     const { food } = props
     return <View style={tw`flex flex-row h-24 my-2 bg-transparent w-full`}>
-        <View style={tw``}>
-            <Image source={{ uri: food.pictureURL }}
-                   style={{ width: '100%', height: undefined, aspectRatio: 1, flex: 1, borderRadius: 10 }}
-                   resizeMode="contain" />
-        </View>
-        <View style={tw`p-2 flex w-full`}>
-            <Text style={tw`text-base text-sky-900`}>{getName(food.names)}</Text>
-            <Text style={tw`flex w-80 text-sky-950`}>{getName(food.descriptions).substring(0, 100)}</Text>
-            <Text style={tw`flex text-sky-800`}>{formatPrice(food.price)}</Text>
-        </View>
+        <Link href={`${food.id}/modal`}>
+            <View style={tw``}>
+                <Image source={{ uri: food.pictureURL }}
+                       style={{ width: '100%', height: undefined, aspectRatio: 1, flex: 1, borderRadius: 10 }}
+                       resizeMode="contain" />
+            </View>
+            <View style={tw`p-2 flex w-full`}>
+                <Text style={tw`text-base text-sky-900`}>{getName(food.names)}</Text>
+                <Text style={tw`flex w-80 text-sky-950`}>{getName(food.descriptions).substring(0, 100)}</Text>
+                <Text style={tw`flex text-sky-800`}>{formatPrice(food.price)}</Text>
+            </View>
+        </Link>
     </View>
 }
 

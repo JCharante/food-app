@@ -44,6 +44,7 @@ export default function Home() {
                     color="action"
                     onPress={() => {navigation.push('/merchant')}}
                 />
+                <CardItem label="modal" color="action" onPress={() => {navigation.push('/modal')}}/>
                 <CardItem
                     label="Sign out"
                     color="action"

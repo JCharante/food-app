@@ -72,7 +72,9 @@ export default function App() {
                 <TokenContext.Provider value={{ token, setToken }}>
                     <RestaurantContext.Provider value={{ restaurant, setRestaurant }}>
                         <RefetchContext.Provider value={refetchDetails}>
-                            <Stack />
+                            <Stack>
+                                <Stack.Screen name="modal" options={{presentation: "modal"}}/>
+                            </Stack>
                         </RefetchContext.Provider>
                     </RestaurantContext.Provider>
                 </TokenContext.Provider>
