@@ -24,25 +24,54 @@ export const EditFoodScreen = ({ route }) => {
         'vi': ''
     })
     const [price, setPrice] = useState(0)
-    type RouterOutput = inferRouterOutputs<AppRouter>
-    type ArrElement<ArrType> = ArrType extends readonly (infer ElementType)[]
-        ? ElementType
-        : never;
 
     const foodItemsReq = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
+    const addonCatsReq = trpc.getRestaurantAddonCategories.useQuery({ restaurantID })
     const foodItemMutation = trpc.patchRestaurantFoodItem.useMutation()
-
-    if (!foodItemsReq.data) return <View><Text>Loading...</Text></View>
 
     const foodItem = foodItemsReq.data.find((f) => f._id === foodItemID)
 
-    if (foodItem === undefined) return <View><Text>An error occured.</Text></View>
-
     useEffect(() => {
+        if (!foodItemsReq.data) {
+            return
+        }
         setNames(foodItem.names)
         setDescriptions(foodItem.descriptions)
         setPrice(foodItem.price)
     }, [foodItem])
+
+    if (!foodItemsReq.data || !addonCatsReq.data) return <View><Text>Loading...</Text></View>
+    if (foodItem === undefined) return <View><Text>An error occurred.</Text></View>
+
+
+    const addons = addonCatsReq.data
+
+    const addonCatsSelected = addons.filter((cat) => foodItem.addons.includes(cat._id))
+    const addonCatsUnselected = addons.filter((cat) => !foodItem.addons.includes(cat._id))
+
+    const addAddonCat = async (addonCatID) => {
+        await foodItemMutation.mutateAsync({
+            restaurantID,
+            foodItemID,
+            names,
+            descriptions,
+            price,
+            addons: foodItem.addons.concat(addonCatID)
+        })
+        await foodItemsReq.refetch()
+    }
+
+    const removeAddonCat = async (addonCatID) => {
+        await foodItemMutation.mutateAsync({
+            restaurantID,
+            foodItemID,
+            names,
+            descriptions,
+            price,
+            addons: foodItem.addons.filter((id) => id !== addonCatID)
+        })
+        await foodItemsReq.refetch()
+    }
 
     const content = () => <KeyboardAvoidingView>
         <ScrollView>
@@ -84,6 +113,50 @@ export const EditFoodScreen = ({ route }) => {
                                 })
                           }}
                 />
+            </View>
+            {/* https://stackoverflow.com/a/61611734 */}
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
+                <View>
+                    <Text style={{width: 50, textAlign: 'center'}}>Addon Categories</Text>
+                </View>
+                <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
+            </View>
+            <View padding-15 flex>
+                {addonCatsSelected.map((cat) => <>
+                    <CardItem
+                        key={cat._id}
+                        color="info"
+                        onPress={() => {}}
+                    >
+                        <View padding-15>
+                            <Text>{getName(cat.names)}</Text>
+                        </View>
+                        <View flex right>
+                            <Text style={{ color: 'red' }}
+                                  onPress={() => removeAddonCat(cat._id)}>
+                                Remove
+                            </Text>
+                        </View>
+                    </CardItem>
+                </>)}
+                {addonCatsUnselected.map((cat) => <>
+                    <CardItem
+                        key={cat._id}
+                        color="info"
+                        onPress={() => {}}
+                    >
+                        <View padding-15>
+                            <Text>{getName(cat.names)}</Text>
+                        </View>
+                        <View flex right>
+                            <Text style={{ color: 'green' }}
+                                  onPress={() => addAddonCat(cat._id)}>
+                                Add
+                            </Text>
+                        </View>
+                    </CardItem>
+                </>)}
             </View>
         </ScrollView>
     </KeyboardAvoidingView>
