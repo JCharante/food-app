@@ -1,7 +1,6 @@
 import {Stack, useRouter} from "expo-router";
 import {ScrollView} from "react-native-gesture-handler";
-import {Text} from "react-native";
-import {View, Card} from "react-native-ui-lib";
+import {Text, View } from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import IconNearby from "../../../assets/custom-icons/nearby.svg"
 import IconPromo from "../../../assets/custom-icons/promo.svg"
@@ -24,6 +23,7 @@ import IconWestern from "../../../assets/custom-icons/food/western.svg"
 import {trpc} from "../../../util/api";
 import {useMemo} from "react";
 import {getName, tw} from "../../../util/utilities";
+import {useIntl} from "react-intl";
 
 type IconNames = 'nearby' | 'brunch' | 'burger' | 'chinese' | 'coffee' | 'dessert' | 'health' | 'indian' | 'italian' | 'japanese' | 'juice' | 'korean' | 'pizza' | 'thai' | 'vietnam' | 'western'
 
@@ -79,6 +79,7 @@ interface IRestaurantCategory {
 export default function HomeIndex() {
     const navigation = useRouter()
     const restaurantCategoriesReq = trpc.search.getRestaurantCategories.useQuery({})
+    const t = useIntl()
 
     // todo: update current language to use language from context
     const categoryElements = useMemo(() => {
@@ -100,7 +101,7 @@ export default function HomeIndex() {
         <SafeAreaView style={tw`flex flex-1`}>
             <View style={tw`flex flex-1 p-4`}>
                 <Stack.Screen options={{ title: 'Goodies.vn', headerBackVisible: false, headerShown: false }}/>
-                <Text style={tw`font-semibold text-lg text-neutral-900 mb-3`}>Categories</Text>
+                <Text style={tw`font-semibold text-lg text-neutral-900 mb-3`}>{t.formatMessage({ id: 'root.home.category' })}</Text>
                 <View style={tw`flex flex-row flex-wrap gap-3 justify-center`}>
                     {categoryElements}
                 </View>

@@ -21,5 +21,6 @@
   "sign-up.data.vegan.title": "Vegan",
   "sign-up.data.vegan.description": "Veganism is a lifestyle with a vegetarian diet that also avoids consuming dairy, eggs, and any other ingredients derived from animals",
   "sign-up.data.exploring.title": "Exploring",
-  "sign-up.data.exploring.description": "I'm still exploring"
+  "sign-up.data.exploring.description": "I'm still exploring",
+  "root.home.category": "Category"
 }
