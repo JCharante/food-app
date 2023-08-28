@@ -19,19 +19,15 @@ export const Index = () => {
                 navigation.push('/login')
             } else {
                 setToken(value)
+                // TODO: redirect without allowing back button
+                navigation.push('/home')
             }
         }
 
         fun().catch(e => console.log(e))
-    }, [])
+    }, [token])
 
-    return token !== '' ? (<View padding-15>
-        <Stack.Screen options={{ title: 'Merchant Home' }}/>
-        <CardItem label="Merchant Home Screen" color="info" />
-        <CardItem onPress={() => {navigation.push('/merchant/manageRestaurants')}}
-                  color="action"
-                  label="Manage Restaurants" />
-    </View>) : null
+    return <View></View>
 }
 
 export default Index
