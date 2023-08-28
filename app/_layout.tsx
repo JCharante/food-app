@@ -12,6 +12,8 @@ import en from "../translations/en.json";
 import vi from "../translations/vi.json"
 import {IntlProvider} from "react-intl";
 import { getLocales } from 'expo-localization'
+import { Provider } from 'react-redux'
+import { store } from '../util/store'
 
 export default function App() {
     const pathname = usePathname();
@@ -88,18 +90,20 @@ export default function App() {
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
             <QueryClientProvider client={queryClient}>
                 <TokenContext.Provider value={{ token, setToken }}>
-                    <RestaurantContext.Provider value={{ restaurant, setRestaurant }}>
-                        <RefetchContext.Provider value={refetchDetails}>
-                            <IntlProvider locale={locale} messages={locale === 'en' ? en : vi}>
-                                <LanguageSwitcherContext.Provider value={{locale, setLocale}}>
-                                    <Stack>
-                                        <Stack.Screen name="modal" options={{presentation: "modal"}}/>
-                                        <Stack.Screen name="root" options={{headerShown: false}}/>
-                                    </Stack>
-                                </LanguageSwitcherContext.Provider>
-                            </IntlProvider>
-                        </RefetchContext.Provider>
-                    </RestaurantContext.Provider>
+                    <Provider store={store}>
+                        <RestaurantContext.Provider value={{ restaurant, setRestaurant }}>
+                            <RefetchContext.Provider value={refetchDetails}>
+                                <IntlProvider locale={locale} messages={locale === 'en' ? en : vi}>
+                                    <LanguageSwitcherContext.Provider value={{locale, setLocale}}>
+                                        <Stack>
+                                            <Stack.Screen name="modal" options={{presentation: "modal"}}/>
+                                            <Stack.Screen name="root" options={{headerShown: false}}/>
+                                        </Stack>
+                                    </LanguageSwitcherContext.Provider>
+                                </IntlProvider>
+                            </RefetchContext.Provider>
+                        </RestaurantContext.Provider>
+                    </Provider>
                 </TokenContext.Provider>
             </QueryClientProvider>
         </trpc.Provider>

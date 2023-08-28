@@ -1,7 +1,8 @@
 import {Stack, useRouter} from "expo-router";
 import {ScrollView} from "react-native-gesture-handler";
-import {Text, View } from "react-native";
+import {Pressable, Text, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
+// TODO: move these imports to a better place
 import IconNearby from "../../../assets/custom-icons/nearby.svg"
 import IconPromo from "../../../assets/custom-icons/promo.svg"
 import IconBreakfast from "../../../assets/custom-icons/food/breakfast.svg"
@@ -21,11 +22,17 @@ import IconThai from "../../../assets/custom-icons/food/thai.svg"
 import IconVietnam from "../../../assets/custom-icons/food/vietnam.svg"
 import IconWestern from "../../../assets/custom-icons/food/western.svg"
 import GoodiesSquareLogo from "../../../assets/goodies-square-logo.svg"
+import IconVeganModeOn from "../../../assets/custom-icons/veganMode.svg"
+import IconVeganModeOff from "../../../assets/custom-icons/vegetarianMode.svg"
 import {trpc} from "../../../util/api";
 import {useEffect, useMemo, useState} from "react";
 import {getName, tw} from "../../../util/utilities";
 import {useIntl} from "react-intl";
 import {GoodiesSearchInput} from "../../../components/GoodiesSearchInput";
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../../util/store'
+import { toggleVeganMode } from '../../../util/customerHomeSlice';
+
 
 type IconNames = 'nearby' | 'brunch' | 'burger' | 'chinese' | 'coffee' | 'dessert' | 'health' | 'indian' | 'italian' | 'japanese' | 'juice' | 'korean' | 'pizza' | 'thai' | 'vietnam' | 'western'
 
@@ -82,14 +89,23 @@ interface IRestaurantCategory {
 }
 
 export default function HomeIndex() {
-    const navigation = useRouter()
-    const restaurantCategoriesReq = trpc.search.getRestaurantCategories.useQuery({})
+    // Essentials
     const t = useIntl()
+    const navigation = useRouter()
+    // TODO: remove this
+    const restaurantCategoriesReq = trpc.search.getRestaurantCategories.useQuery({})
+    // For showing the user's name
     const nameReq = trpc.user.userInfo.useQuery()
+    // Search text
     const [searchText, setSearchText] = useState<string>('')
+    // For displaying user's location
     const [latlong, setLatlong] = useState<{latitude: number, longitude: number}>({latitude: 0, longitude: 0})
     const reverseGeoEncodeReq = trpc.geo.getCurrentPlace.useQuery(latlong, { enabled: latlong.longitude !== 0})
+    // For the vegan mode
+    const dispatch = useDispatch<AppDispatch>();
+    const veganMode = useSelector((state: RootState) => state.customerHome.veganMode);
 
+    // Get location from device
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -123,6 +139,10 @@ export default function HomeIndex() {
 
     const displayedAddress = reverseGeoEncodeReq.data && reverseGeoEncodeReq.data.length > 0 ? reverseGeoEncodeReq.data[0].name : 'Pick Address'
 
+    const veganModeSelector = (<Pressable onPress={() => dispatch(toggleVeganMode())}>
+        {veganMode ? <IconVeganModeOn/> : <IconVeganModeOff/>}
+    </Pressable>)
+
     return (
         <SafeAreaView style={tw`flex flex-1`}>
             <View style={tw`flex flex-1 p-4`}>
@@ -135,12 +155,14 @@ export default function HomeIndex() {
                     <View style={tw`flex flex-1`}></View>
                     <GoodiesSquareLogo/>
                 </View>
-                <View style={tw`flex flex-row mt-4 mb-[20px]`}>
+                <View style={tw`flex flex-row mt-4 mb-[20px] justify-between`}>
+                    {/*TODO: Technically we could find the device width and minus it by 44 & padding*/}
                     <GoodiesSearchInput
                         value={searchText}
                         setValue={setSearchText}
                         placeholder={'Search'}
                     />
+                    {veganModeSelector}
                 </View>
                 <Text style={tw`font-semibold text-lg text-neutral-900 mb-3`}>{t.formatMessage({ id: 'root.home.category' })}</Text>
                 <View style={tw`flex flex-row flex-wrap gap-3 justify-center`}>

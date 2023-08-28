@@ -9,7 +9,7 @@ export interface GoodiesSearchInputProps {
 }
 
 export const GoodiesSearchInput = (props: GoodiesSearchInputProps) => {
-    return <View style={tw`flex flex-row bg-white shadow-sm w-full py-[10px] pl-3 rounded-lg`}>
+    return <View style={tw`flex flex-row bg-white shadow-sm w-10/12 py-[10px] pl-3 rounded-lg`}>
         <Ionicons
             name="search-outline"
             size={24}
