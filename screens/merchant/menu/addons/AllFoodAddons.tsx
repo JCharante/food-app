@@ -5,7 +5,7 @@ import {getName} from "../../../../util/utilities";
 import {trpc} from "../../../../util/api";
 import {useRefetchOnFocus} from "../../../../util/hooks";
 
-export const ViewAllFoodAddonsScreen = ({ navigation, route }) => {
+export const AllFoodAddons = ({ navigation, route }) => {
     const restaurantID = route.params.restaurantID
     const addons = trpc.getRestaurantFoodAddons.useQuery({ restaurantID })
     useRefetchOnFocus(addons.refetch)
@@ -17,7 +17,7 @@ export const ViewAllFoodAddonsScreen = ({ navigation, route }) => {
     return <ScrollView >
         <View padding-15>
             <View marginT-10>
-                <Text style={{ fontSize: 20 }}>Food Addons:</Text>
+                <Text style={{ fontSize: 20 }}>Food Addon Categories:</Text>
                 <Text>Edit a Food to attach a Food Addon Category.</Text>
                 {addonCatReq.data.map((addonCat) => {
                     return <CardItem key={addonCat._id}>
@@ -51,9 +51,10 @@ export const ViewAllFoodAddonsScreen = ({ navigation, route }) => {
                         <View flex
                               right>
                             <Text onPress={() => navigation.navigate(
-                                'EditFoodScreen',
+                                'EditFoodAddon',
                                 {
-                                    restaurantID
+                                    restaurantID,
+                                    addonID: addon._id
                                 }
                             )}>Edit</Text>
                         </View>

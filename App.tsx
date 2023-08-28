@@ -23,9 +23,10 @@ import { trpc } from './util/api';
 import {registerRootComponent} from "expo";
 import { CreateFoodScreen } from './screens/merchant/menu/foods/CreateFoodScreen';
 import { CreateFoodAddonScreen } from './screens/merchant/menu/addons/CreateFoodAddonScreen';
-import {ViewAllFoodAddonsScreen} from "./screens/merchant/menu/addons/ViewAllFoodAddonsScreen";
+import {AllFoodAddons} from "./screens/merchant/menu/addons/AllFoodAddons";
 import {CreateFoodAddonCategoryScreen} from "./screens/merchant/menu/addons/CreateFoodAddonCategoryScreen";
 import {EditAddonCategory} from "./screens/merchant/menu/addons/EditAddonCategory";
+import { EditFoodAddon } from './screens/merchant/menu/addons/EditFoodAddon';
 
 
 Colors.loadColors({
@@ -115,11 +116,14 @@ export default function App() {
                                             options={{ title: 'Update Category'}}/>
                               {/* Addons */}
                               <Stack.Screen name="ViewAllFoodAddons"
-                                            component={ViewAllFoodAddonsScreen}
+                                            component={AllFoodAddons}
                                             options={{ title: 'All Food Addons' }}/>
                               <Stack.Screen name="CreateFoodAddon"
                                             component={CreateFoodAddonScreen}
                                             options={{ title: 'Create Food Addon' }}/>
+                              <Stack.Screen name="EditFoodAddon"
+                                            component={EditFoodAddon}
+                                            options={{ title: 'Edit Food Addon' }}/>
                               {/* Addon Categories */}
                               <Stack.Screen name="CreateFoodAddonCategory"
                                             component={CreateFoodAddonCategoryScreen}
