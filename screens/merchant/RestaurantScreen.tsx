@@ -19,8 +19,6 @@ export const RestaurantScreen = ({ navigation, route  }) => {
 
     const shop = data[data.findIndex((r) => r._id.toString() === restaurantID)]
 
-    console.log(restaurantImageReq.data)
-
     const newPictureFlow = async () => {
         let pickerResult = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
