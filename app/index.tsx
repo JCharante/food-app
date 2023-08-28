@@ -18,8 +18,8 @@ export const Index = () => {
             if(value === null) {
                 // Must be first launch
                 // TODO: redirect without allowing back button
-                navigation.push('/onboarding/data?pncc=1&pnr=2073185560&requestId=6406037a35a14da9b7ef1a64dff37821&name=Jyan&promoCode=admin')
-                // navigation.push('/onboarding/languageSelect')
+                // navigation.push('/onboarding/data?pncc=1&pnr=2073185560&requestId=6406037a35a14da9b7ef1a64dff37821&name=Jyan&promoCode=admin')
+                navigation.push('/onboarding/languageSelect')
             } else {
                 // TODO: check if token is valid / expired
                 setToken(value)

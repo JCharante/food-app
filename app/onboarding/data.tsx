@@ -1,12 +1,15 @@
 import {tw, useParamFetcher} from "../../util/utilities";
 import {useIntl} from "react-intl";
 import {Stack, useRouter} from "expo-router";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {HeaderBackButtonProps} from "@react-navigation/native-stack/src/types";
 import {MaterialIcons} from "@expo/vector-icons";
 import {View, Text, Pressable, Keyboard} from "react-native";
 import {GoodiesButton} from "../../components/GoodiesButton";
+import {trpc} from "../../util/api";
+import {TokenContext} from "../../util/tokenContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface OptionComponentProps {
     title: string,
@@ -31,14 +34,32 @@ export default function DataCollectPage() {
     // note: promoCode might be ''
     const t = useIntl()
     const navigation = useRouter();
-    const [selection, setSelection] = useState<string>("")
+    const createAccount = trpc.user.createAccount.useMutation()
+    const [selection, setSelection] = useState<"skip" | "exploring" | "vegan" | "vegetarian">("skip")
+    const { token, setToken } = useContext(TokenContext)
+    const [showLoading, setShowLoading] = useState<boolean>(false)
 
     const submit = async () => {
-        // after saving token
-        navigation.push(`/`)
+        setShowLoading(true)
+        const res = await createAccount.mutateAsync({
+            phoneNumber: pncc + pnr,
+            vonageRequestId: requestId,
+            name: name,
+            ...(promoCode.length > 0 && { promoCode }),
+            userType: selection
+        })
+        if (res.sessionKey) {
+            setToken(res.sessionKey)
+            await AsyncStorage.setItem('token', res.sessionKey)
+            setShowLoading(false)
+            navigation.replace(`/`)
+        } else {
+            console.error(res, 'no session key')
+            setShowLoading(false)
+        }
     }
 
-    return <SafeAreaView style={tw`bg-background flex flex-1`}>
+    return <View style={tw`bg-background flex flex-1`}>
         <Stack.Screen options={{
             title: t.formatMessage({ id: 'sign-up.title' }),
             headerLeft: (props: HeaderBackButtonProps) => (<MaterialIcons name="arrow-back" size={24} color="black" onPress={() => navigation.back()} />),
@@ -54,7 +75,7 @@ export default function DataCollectPage() {
                     title={t.formatMessage({ id: 'sign-up.data.vegetarian.title'})}
                     body={t.formatMessage({ id: 'sign-up.data.vegetarian.description'})}
                     selected={selection === 'vegetarian'}
-                    onPress={() => setSelection('vegetarian')}
+                    onPress={() => selection === 'vegetarian' ? setSelection('skip') : setSelection('vegetarian')}
                 />
             </View>
             <View style={tw`mb-2`}>
@@ -62,7 +83,7 @@ export default function DataCollectPage() {
                     title={t.formatMessage({ id: 'sign-up.data.vegan.title'})}
                     body={t.formatMessage({ id: 'sign-up.data.vegan.description'})}
                     selected={selection === 'vegan'}
-                    onPress={() => setSelection('vegan')}
+                    onPress={() => selection === 'vegan' ? setSelection('skip') : setSelection('vegan')}
                 />
             </View>
             <View style={tw`mb-3`}>
@@ -70,7 +91,7 @@ export default function DataCollectPage() {
                     title={t.formatMessage({ id: 'sign-up.data.exploring.title'})}
                     body={t.formatMessage({ id: 'sign-up.data.exploring.description'})}
                     selected={selection === 'exploring'}
-                    onPress={() => setSelection('exploring')}
+                    onPress={() => selection === 'exploring' ? setSelection('skip') : setSelection('exploring')}
                 />
             </View>
             <Text style={tw`text-neutral-600 text-sm leading-relaxed`}>*{t.formatMessage({ id: 'sign-up.data.list.helperText'})}</Text>
@@ -81,13 +102,15 @@ export default function DataCollectPage() {
                 <GoodiesButton title={'Skip'}
                                size={'xl'}
                                isPrimary={false}
-                               onPress={submit}/>
+                               isLoading={showLoading}
+                               onPress={async () => { setSelection("skip"); await submit() }}/>
                 <GoodiesButton title={'Next'}
                                size={'xl'}
                                isPrimary={true}
+                               isLoading={showLoading}
                                onPress={submit}
-                               active={selection !== ""}/>
+                               active={selection !== "skip"}/>
             </View>
         </View>
-     </SafeAreaView>
+     </View>
 }

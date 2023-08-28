@@ -38,7 +38,7 @@ export default function OnboardingNamePage() {
     }, []);
 
     const submit = async () => {
-        navigation.push(`/onboarding/name?pncc=${
+        navigation.push(`/onboarding/promo?pncc=${
             pncc
         }&pnr=${
             pnr
