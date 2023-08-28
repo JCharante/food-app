@@ -6,11 +6,10 @@ import {TokenContext} from "../util/tokenContext";
 import {RestaurantContext} from "../util/restaurantContext";
 import {registerRootComponent} from "expo";
 import {StyleSheet} from "react-native";
-
-
 import { Stack, usePathname } from "expo-router"
 import {IRefetchContext, RefetchContext} from "../util/hooks";
-
+import en from "../translations/en.json";
+import {IntlProvider} from "react-intl";
 
 export default function App() {
     const pathname = usePathname();
@@ -27,6 +26,9 @@ export default function App() {
             ]
         }),
     );
+
+    const locale = "en" // TODO: use https://docs.expo.dev/guides/localization/
+
 
     const [refetchDetails, setRefetchDetails] = useState<IRefetchContext>({
         url: pathname,
@@ -65,6 +67,7 @@ export default function App() {
         )
     }, [token])
 
+
     // @ts-ignore
     return (
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
@@ -72,9 +75,11 @@ export default function App() {
                 <TokenContext.Provider value={{ token, setToken }}>
                     <RestaurantContext.Provider value={{ restaurant, setRestaurant }}>
                         <RefetchContext.Provider value={refetchDetails}>
-                            <Stack>
-                                <Stack.Screen name="modal" options={{presentation: "modal"}}/>
-                            </Stack>
+                            <IntlProvider locale={locale} messages={en}>
+                                <Stack>
+                                    <Stack.Screen name="modal" options={{presentation: "modal"}}/>
+                                </Stack>
+                            </IntlProvider>
                         </RefetchContext.Provider>
                     </RestaurantContext.Provider>
                 </TokenContext.Provider>

@@ -33,7 +33,8 @@
         {
           "photosPermission": "We use this to upload photos for your restaurant & menu."
         }
-      ]
+      ],
+      "expo-localization"
     ]
   }
 }

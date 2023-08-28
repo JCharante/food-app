@@ -12,7 +12,7 @@ module.exports = {
     ...module.exports,
     resolver: {
         ...module.exports.resolver,
-        nodeModulesPath: [packagePath]
+        nodeModulesPath: [packagePath], // https://facebook.github.io/metro/docs/configuration/#nodemodulespaths
     },
     watchFolders: [packagePath]
 }
