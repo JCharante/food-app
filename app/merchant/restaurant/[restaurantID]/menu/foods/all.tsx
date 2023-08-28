@@ -1,7 +1,7 @@
 import {View, Text, Card} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import { CardItem } from "../../../../../../components/CardItem";
-import {getName} from "../../../../../../util/utilities";
+import {getName, getNumber, useParamFetcher} from "../../../../../../util/utilities";
 import {trpc} from "../../../../../../util/api";
 import {useRefetchOnFocus} from "../../../../../../util/hooks";
 import {Stack, useRouter, useSearchParams} from "expo-router";
@@ -14,7 +14,7 @@ const ViewWrapper = ({ children }) => {
 }
 export const AllFoodsScreen = ({ route }) => {
     const navigation = useRouter()
-    const restaurantID = useSearchParams().restaurantID?.toString() || ''
+    const { restaurantID } = useParamFetcher()
     const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
     useRefetchOnFocus(foodItems.refetch)
 
@@ -26,8 +26,7 @@ export const AllFoodsScreen = ({ route }) => {
                 <Text style={{ fontSize: 20 }}>Food:</Text>
                 <Text>Food will only show the menu if it is added to a category.</Text>
                 {foodItems.data.map((food) => {
-                    console.log(food)
-                    return <CardItem key={food._id.toString()}>
+                    return <CardItem key={food.id}>
                         <Card.Section imageSource={{ url: food.pictureURL }}
                                       imageStyle={{width: 96, height: 96}} />
                         <View padding-15 flex>
@@ -35,14 +34,14 @@ export const AllFoodsScreen = ({ route }) => {
                         </View>
                         <View flex
                               right>
-                            <Text onPress={() => navigation.push(`/merchant/restaurant/${restaurantID}/menu/food/${food._id.toString()}`)}>Edit</Text>
+                            <Text onPress={() => navigation.push(`/merchant/restaurant/${restaurantID}/menu/food/${food.id}`)}>Edit</Text>
                         </View>
                     </CardItem>
                 })}
                 <CardItem
                     label="Create Food"
                     color="action"
-                    // onPress={() => navigation.navigate('CreateFood', { restaurantID })}
+                    onPress={() => navigation.push(`/merchant/restaurant/${restaurantID}/menu/food/new`)}
                 />
             </View>
         </View>

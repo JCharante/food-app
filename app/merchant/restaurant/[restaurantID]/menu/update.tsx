@@ -1,7 +1,7 @@
 import {View, Text, Card} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import { CardItem } from "../../../../../components/CardItem";
-import {getName} from "../../../../../util/utilities";
+import {getName, getNumber} from "../../../../../util/utilities";
 import {trpc} from "../../../../../util/api";
 import {useRefetchOnFocus} from "../../../../../util/hooks";
 import {Stack, useRouter, useSearchParams} from "expo-router";
@@ -9,41 +9,38 @@ import { Modify } from '@goodies-tech/api'
 
 export const Update = ({ route }) => {
     const navigation = useRouter()
-    const restaurantID = useSearchParams().restaurantID?.toString() || ''
+    const restaurantID = getNumber(useSearchParams().restaurantID || '0')
     const categoriesReq = trpc.getRestaurantCategories.useQuery({ restaurantID })
     useRefetchOnFocus(categoriesReq.refetch)
     const restaurantsReq = trpc.userGetRestaurants.useQuery()
     useRefetchOnFocus(restaurantsReq.refetch)
     const menuMutation = trpc.patchRestaurantMenu.useMutation()
 
-    if (!restaurantsReq.data || !categoriesReq.data || restaurantID === '' || !restaurantID) return <View>
+    if (!restaurantsReq.data || !categoriesReq.data || restaurantID === 0 || !restaurantID) return <View>
         <Stack.Screen options={{ title: '' }}/>
         <Text>Loading...</Text>
     </View>
-    const res = restaurantsReq.data.find((r) => r._id === restaurantID)
-    const restaurant: Modify<typeof res, {
-        menu: any
-    }> = res
-    console.log(restaurant.menu)
+    const restaurant = restaurantsReq.data.find((r) => r.id === restaurantID)
 
-    const categoryIsOnMenu = (categoryID: string) => {
-        return restaurant.menu.categories.includes(categoryID)
+    const categoryIsOnMenu = (categoryID: number) => {
+        const cat = restaurant.menu.categories.find((c) => c.id === categoryID)
+        return cat !== undefined
     }
 
-    const addCategoryToMenu = async (categoryID: string) => {
+    const addCategoryToMenu = async (categoryID: number) => {
         await menuMutation.mutateAsync({
             restaurantID,
-            menuID: restaurant.menu._id,
-            categories: restaurant.menu.categories.concat(categoryID)
+            menuID: restaurant.menu.id,
+            categories: restaurant.menu.categories.map((c) => c.id).concat(categoryID)
         })
         await restaurantsReq.refetch()
     }
 
-    const removeCategoryFromMenu = async (categoryID: string) => {
+    const removeCategoryFromMenu = async (categoryID: number) => {
         await menuMutation.mutateAsync({
             restaurantID,
-            menuID: restaurant.menu._id,
-            categories: restaurant.menu.categories.filter((c) => c !== categoryID)
+            menuID: restaurant.menu.id,
+            categories: restaurant.menu.categories.map((c) => c.id).filter((c) => c !== categoryID)
         })
         await restaurantsReq.refetch()
     }
@@ -80,7 +77,7 @@ export const Update = ({ route }) => {
                 />
                 <Text style={{ fontSize: 20 }}>Menu Categories:</Text>
                 {categoriesReq.data.map((cat) => {
-                    return <Card key={cat._id}
+                    return <Card key={cat.id}
                                  style={{ marginBottom: 5, marginTop: 5 }}
                                  borderRadius={20}
                                  row
@@ -92,17 +89,17 @@ export const Update = ({ route }) => {
                         </View>
                         <View flex right>
                             <Text style={{ color: 'green' }}
-                                  onPress={() => navigation.push(`/merchant/restaurant/${restaurantID}/menu/category/${cat._id}/update`)}
+                                  onPress={() => navigation.push(`/merchant/restaurant/${restaurantID}/menu/category/${cat.id}/update`)}
                             >Edit</Text>
                         </View>
                         <View flex right>
-                            {categoryIsOnMenu(cat._id) ?
+                            {categoryIsOnMenu(cat.id) ?
                                 (<Text style={{ color: 'red' }}
-                                    onPress={() => removeCategoryFromMenu(cat._id)}
+                                    onPress={() => removeCategoryFromMenu(cat.id)}
                                 >Hide</Text>)
                             :
                                 (<Text style={{ color: 'green' }}
-                                  onPress={() => addCategoryToMenu(cat._id)}
+                                  onPress={() => addCategoryToMenu(cat.id)}
                             >
                                 Show
                             </Text>)}

@@ -5,13 +5,14 @@ import {CardItem} from "../../../../../../components/CardItem";
 import {trpc} from "../../../../../../util/api";
 import {InternalTextField} from "../../../../../../components/InternalTextField";
 import {Stack, useRouter, useSearchParams} from "expo-router";
+import {useParamFetcher} from "../../../../../../util/utilities";
 
 const { TextField } = Incubator
 
 
 export const CreateCategoryScreen = ({ route }) => {
     const navigation = useRouter()
-    const restaurantID = useSearchParams().restaurantID?.toString() || ''
+    const { restaurantID } = useParamFetcher()
     const [names, setNames] = useState<{[languageCode: string]: string}>({
         'en': '',
         'vi': ''

@@ -6,6 +6,7 @@ import {trpc} from "../../../../../../util/api";
 import {InternalTextField} from "../../../../../../components/InternalTextField";
 import {Switch} from "react-native";
 import {Stack, useRouter, useSearchParams} from "expo-router";
+import {ANMS, useParamFetcher} from "../../../../../../util/utilities";
 
 const ViewWrapper = ({ children }) => {
     return <ScrollView>
@@ -16,8 +17,7 @@ const ViewWrapper = ({ children }) => {
 
 export const EditFoodAddon = ({ route }) => {
     const navigation = useRouter()
-    const restaurantID = useSearchParams().restaurantID?.toString() || ''
-    const addonID = useSearchParams().addonID?.toString() || ''
+    const { restaurantID, addonID } = useParamFetcher()
     const [names, setNames] = useState<{[languageCode: string]: string}>({
         'en': '',
         'vi': ''
@@ -37,14 +37,14 @@ export const EditFoodAddon = ({ route }) => {
         return <ViewWrapper><Text>Loading...</Text></ViewWrapper>
     }
 
-    const addon = addonsReq.data.find(a => a._id === addonID)
+    const addon = addonsReq.data.find(a => a.id === addonID)
     if (!addon) {
         return <ViewWrapper><Text>Cannot find addon</Text></ViewWrapper>
     }
 
     useEffect(() => {
-        setNames(addon.names)
-        setDescriptions(addon.descriptions)
+        setNames(ANMS(addon.names))
+        setDescriptions(ANMS(addon.descriptions))
         setPrice(addon.price)
         setInStock(addon.inStock)
         setVisible(addon.visible)

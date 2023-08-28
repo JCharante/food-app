@@ -4,8 +4,8 @@ import {useEffect, useMemo, useState} from "react";
 import {InternalTextField} from "../../../../../../components/InternalTextField";
 import {CardItem} from "../../../../../../components/CardItem";
 import {trpc} from "../../../../../../util/api";
-import {getName} from "../../../../../../util/utilities";
-import {Stack, useRouter, useSearchParams} from "expo-router";
+import {AIEACT, ANMS, getName, useParamFetcher} from "../../../../../../util/utilities";
+import {Stack, useRouter } from "expo-router";
 
 const ViewWrapper = ({ children }) => {
     return <ScrollView>
@@ -16,8 +16,7 @@ const ViewWrapper = ({ children }) => {
 
 export const Edit = ({ route }) => {
     const navigation = useRouter()
-    const restaurantID = useSearchParams().restaurantID?.toString() || ''
-    const addonCategoryID = useSearchParams().addonCategoryID?.toString() || ''
+    const { restaurantID, addonCategoryID } = useParamFetcher()
     const [names, setNames] = useState<{[languageCode: string]: string}>({
         'en': '',
         'vi': ''
@@ -29,29 +28,29 @@ export const Edit = ({ route }) => {
 
     if (!addonCategoriesReq.data || !addonsReq.data) return <ViewWrapper><Text>Loading...</Text></ViewWrapper>
 
-    const addonCat = addonCategoriesReq.data.find((f) => f._id === addonCategoryID)
+    const addonCat = addonCategoriesReq.data.find((f) => f.id === addonCategoryID)
 
     useEffect(() => {
-        setCatType(addonCat.type)
-        setNames(addonCat.names)
+        setCatType(AIEACT(addonCat.type))
+        setNames(ANMS(addonCat.names))
     }, [addonCat])
 
     const mutation = trpc.patchRestaurantFoodAddonCategory.useMutation()
     const selectedAddons = useMemo(() => {
         // addon is in addonCat's addons list
-        return addonsReq.data.filter((addon) => addonCat.addons.map((a) => a._id).includes(addon._id))
+        return addonsReq.data.filter((addon) => addonCat.addons.map((a) => a.id).includes(addon.id))
     }, [addonsReq, addonCategoriesReq])
 
     const unselectedAddons = useMemo(() => {
         // addon is in addonCat's addons list
-        return addonsReq.data.filter((addon) => !addonCat.addons.map((a) => a._id).includes(addon._id))
+        return addonsReq.data.filter((addon) => !addonCat.addons.map((a) => a.id).includes(addon.id))
     }, [addonsReq, addonCategoriesReq])
 
     const addAddon = async (addonID) => {
         await mutation.mutateAsync({
             restaurantID,
             addonCategoryID,
-            addons: addonCat.addons.map((a) => a._id).concat(addonID)
+            addons: addonCat.addons.map((a) => a.id).concat(addonID)
         })
         await addonCategoriesReq.refetch()
     }
@@ -60,7 +59,7 @@ export const Edit = ({ route }) => {
         await mutation.mutateAsync({
             restaurantID,
             addonCategoryID,
-            addons: addonCat.addons.map((a) => a._id).filter((a) => a !== addonID)
+            addons: addonCat.addons.map((a) => a.id).filter((a) => a !== addonID)
         })
         await addonCategoriesReq.refetch()
     }
@@ -103,24 +102,24 @@ export const Edit = ({ route }) => {
                 </View>
                 <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
             </View>
-            {selectedAddons.map((a) => <CardItem key={a._id}>
+            {selectedAddons.map((a) => <CardItem key={a.id}>
                 <View padding-15>
                     <Text>{getName(a.names)}</Text>
                 </View>
                 <View flex right>
                     <Text style={{ color: 'red' }}
-                          onPress={() => removeAddon(a._id)}>
+                          onPress={() => removeAddon(a.id)}>
                         Remove
                     </Text>
                 </View>
             </CardItem>)}
-            {unselectedAddons.map((a) => <CardItem key={a._id}>
+            {unselectedAddons.map((a) => <CardItem key={a.id}>
                     <View padding-15>
                         <Text>{getName(a.names)}</Text>
                     </View>
                     <View flex right>
                         <Text style={{ color: 'green' }}
-                              onPress={() => addAddon(a._id)}>
+                              onPress={() => addAddon(a.id)}>
                             Add
                         </Text>
                     </View>

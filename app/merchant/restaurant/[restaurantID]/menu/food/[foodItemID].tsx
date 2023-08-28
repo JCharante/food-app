@@ -10,7 +10,7 @@ import {trpc} from "../../../../../../util/api";
 import {useRefetchOnFocus} from "../../../../../../util/hooks";
 import {InternalTextField} from "../../../../../../components/InternalTextField";
 import {CardItem} from "../../../../../../components/CardItem";
-import {getName} from "../../../../../../util/utilities";
+import {ANMS, getName, useParamFetcher} from "../../../../../../util/utilities";
 
 const { TextField } = Incubator
 
@@ -22,8 +22,8 @@ const ViewWrapper = ({ children }) => {
 }
 export const EditFoodScreen = ({ }) => {
     const navigation = useRouter()
-    const restaurantID = useSearchParams().restaurantID?.toString() || ''
-    const foodItemID = useSearchParams().foodItemID?.toString() || ''
+
+    const { restaurantID, foodItemID } = useParamFetcher()
     const [names, setNames] = useState<NameMap>({
         'en': '',
         'vi': ''
@@ -41,14 +41,14 @@ export const EditFoodScreen = ({ }) => {
     const foodItemMutation = trpc.patchRestaurantFoodItem.useMutation()
     const putImageMutation = trpc.requestPutFoodItemPicture.useMutation()
 
-    const foodItem = foodItemsReq.data.find((f) => f._id === foodItemID)
+    const foodItem = foodItemsReq.data.find((f) => f.id === foodItemID)
 
     useEffect(() => {
         if (!foodItemsReq.data) {
             return
         }
-        setNames(foodItem.names)
-        setDescriptions(foodItem.descriptions)
+        setNames(ANMS(foodItem.names))
+        setDescriptions(ANMS(foodItem.descriptions))
         setPrice(foodItem.price)
     }, [foodItem])
 
@@ -58,8 +58,8 @@ export const EditFoodScreen = ({ }) => {
 
     const addons = addonCatsReq.data
 
-    const addonCatsSelected = addons.filter((cat) => foodItem.addons.includes(cat._id))
-    const addonCatsUnselected = addons.filter((cat) => !foodItem.addons.includes(cat._id))
+    const addonCatsSelected = addons.filter((cat) => foodItem.addons.find((a) => a.id === cat.id))
+    const addonCatsUnselected = addons.filter((cat) => !foodItem.addons.find((a) => a.id === cat.id))
 
     const addAddonCat = async (addonCatID) => {
         await foodItemMutation.mutateAsync({
@@ -68,7 +68,7 @@ export const EditFoodScreen = ({ }) => {
             names,
             descriptions,
             price,
-            addons: foodItem.addons.concat(addonCatID)
+            addons: foodItem.addons.map((a) => a.id).concat(addonCatID)
         })
         await foodItemsReq.refetch()
     }
@@ -80,7 +80,7 @@ export const EditFoodScreen = ({ }) => {
             names,
             descriptions,
             price,
-            addons: foodItem.addons.filter((id) => id !== addonCatID)
+            addons: foodItem.addons.map((a) => a.id).filter((id) => id !== addonCatID)
         })
         await foodItemsReq.refetch()
     }
@@ -101,7 +101,7 @@ export const EditFoodScreen = ({ }) => {
             { format: SaveFormat.JPEG, compress: 1, base64: false }
         )
 
-        const url = await putImageMutation.mutateAsync({ restaurantID, foodItemID: foodItem._id })
+        const url = await putImageMutation.mutateAsync({ restaurantID, foodItemID: foodItem.id })
 
         const localUri = img.uri;
         const fileExtension = localUri.split('.').pop();
@@ -197,7 +197,7 @@ export const EditFoodScreen = ({ }) => {
             <View padding-15 flex>
                 {addonCatsSelected.map((cat) => <>
                     <CardItem
-                        key={cat._id.toString()}
+                        key={cat.id}
                         color="info"
                         onPress={() => {}}
                     >
@@ -206,7 +206,7 @@ export const EditFoodScreen = ({ }) => {
                         </View>
                         <View flex right>
                             <Text style={{ color: 'red' }}
-                                  onPress={() => removeAddonCat(cat._id)}>
+                                  onPress={() => removeAddonCat(cat.id)}>
                                 Remove
                             </Text>
                         </View>
@@ -214,7 +214,7 @@ export const EditFoodScreen = ({ }) => {
                 </>)}
                 {addonCatsUnselected.map((cat) => <>
                     <CardItem
-                        key={cat._id.toString()}
+                        key={cat.id}
                         color="info"
                         onPress={() => {}}
                     >
@@ -223,7 +223,7 @@ export const EditFoodScreen = ({ }) => {
                         </View>
                         <View flex right>
                             <Text style={{ color: 'green' }}
-                                  onPress={() => addAddonCat(cat._id)}>
+                                  onPress={() => addAddonCat(cat.id)}>
                                 Add
                             </Text>
                         </View>

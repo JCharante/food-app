@@ -10,20 +10,19 @@ import {useSearchParams, useRouter, Stack} from "expo-router";
 
 export const RestaurantScreen = ({ route  }) => {
     const navigation = useRouter()
-    console.log(useSearchParams())
-    const restaurantID = useSearchParams().restaurantID?.toString() || ''
+    const restaurantID = parseInt(useSearchParams().restaurantID.toString()) || 0
     const restaurants = trpc.userGetRestaurants.useQuery()
     const postImageMutation = trpc.postRestaurantImage.useMutation()
     const restaurantImageReq = trpc.getRestaurantImage.useQuery({ restaurantID })
 
-    if (!restaurants.data || !restaurantImageReq.data || restaurantID === '') return <View>
+    if (!restaurants.data || !restaurantImageReq.data || restaurantID === 0) return <View>
         <Stack.Screen options={{ title: '' }}/>
         <Text>Loading...</Text>
     </View>
 
     const data = restaurants.data
 
-    const shop = data[data.findIndex((r) => r._id.toString() === restaurantID)]
+    const shop = data[data.findIndex((r) => r.id === restaurantID)]
 
     const newPictureFlow = async () => {
         let pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -33,8 +32,8 @@ export const RestaurantScreen = ({ route  }) => {
             quality: 1
         });
 
-        // console.log(pickerResult.assets)
 
+        if (!pickerResult.assets) return
         if (pickerResult.assets.length === 0) return
 
         const img = await manipulateAsync(

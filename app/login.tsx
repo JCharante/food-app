@@ -4,32 +4,26 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import {ScrollView, Text } from "react-native";
 import {Button, Colors, TextField, View} from "react-native-ui-lib";
 import {px} from "../util/utilities";
-import {baseURL} from "../util/api";
+import {baseURL, trpc} from "../util/api";
 import {useRouter} from "expo-router";
 
 export default function LoginScreen () {
     const navigation = useRouter()
+    const loginMutation = trpc.loginWithEmail.useMutation()
+
     const [email, setEmail] = useState('email');
     const [password, setPassword] = useState('');
-
     const textFieldDefaults = { 'migrate': true, 'floatingPlaceholder': true } // TODO: don't autocap
 
     const submit = async () => {
+        // TODO: have to re-load app before this works
         console.log('Sending login request')
-        const res = await fetch(`${baseURL}/login/email`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                email,
-                password
-            })
-        })
-        const body = await res.json()
-        console.log(body)
-        await AsyncStorage.setItem('token', body.sessionKey)
-        navigation.push('/home')
+        const req = await loginMutation.mutateAsync({ email, password })
+        if (req.sessionKey) {
+            console.log('Saving token')
+            await AsyncStorage.setItem('token', req.sessionKey)
+            navigation.push('/')
+        }
     }
 
     let emailField = createRef()

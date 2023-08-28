@@ -4,7 +4,8 @@ import {useState} from "react";
 import {InternalTextField} from "../../../../../../components/InternalTextField";
 import {CardItem} from "../../../../../../components/CardItem";
 import {trpc} from "../../../../../../util/api";
-import {Stack, useRouter, useSearchParams} from "expo-router";
+import {Stack, useRouter } from "expo-router";
+import {useParamFetcher} from "../../../../../../util/utilities";
 
 const ViewWrapper = ({ children }) => {
     return <ScrollView>
@@ -15,7 +16,7 @@ const ViewWrapper = ({ children }) => {
 
 export const CreateFoodAddonCategoryScreen = ({ route }) => {
     const navigation = useRouter()
-    const restaurantID = useSearchParams().restaurantID?.toString() || ''
+    const { restaurantID } = useParamFetcher()
     const [names, setNames] = useState<{[languageCode: string]: string}>({
         'en': '',
         'vi': ''

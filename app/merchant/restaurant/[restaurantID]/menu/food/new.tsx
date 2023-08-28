@@ -4,6 +4,8 @@ import {useState} from "react";
 import {CardItem} from "../../../../../../components/CardItem";
 import {trpc} from "../../../../../../util/api";
 import {InternalTextField} from "../../../../../../components/InternalTextField";
+import {useParamFetcher} from "../../../../../../util/utilities";
+import {Stack} from "expo-router";
 
 
 export const CreateFoodScreen = ({ navigation, route }) => {
@@ -17,10 +19,12 @@ export const CreateFoodScreen = ({ navigation, route }) => {
     })
     const [price, setPrice] = useState(0)
 
-    const restaurantID: string = route.params.restaurantID
+
+    const { restaurantID } = useParamFetcher()
     const mutation = trpc.createRestaurantFoodItem.useMutation()
 
     return <ScrollView>
+        <Stack.Screen options={{ title: 'New Food' }}/>
         <View padding-15>
             {mutation.isLoading ? <Text>Loading...</Text> : (<>
                 {mutation.isSuccess ? <Text>Success</Text> : null}

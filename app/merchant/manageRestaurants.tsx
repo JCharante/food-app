@@ -23,14 +23,14 @@ export const ManageRestaurantsScreen = () => {
         <Text>Your Restaurants:</Text>
         <View marginT-10>
         {restaurants.data.map((restaurant) => {
-            return <Card key={restaurant._id.toString()}
+            return <Card key={restaurant.id}
                          style={{ marginBottom: 10 }}
                          row
                          height={90}
                          borderRadius={20}
                          onPress={() => {
                              setRestaurant(restaurant)
-                             navigation.push(`/merchant/restaurant/${restaurant._id}`)}
+                             navigation.push(`/merchant/restaurant/${restaurant.id}`)}
                          }
             >
                 <Card.Section imageSource={{ url: restaurant.pictureURL }}
