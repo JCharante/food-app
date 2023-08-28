@@ -5,6 +5,7 @@ import {useContext, useEffect, useState} from "react";
 import {TokenContext} from "../../util/tokenContext";
 import {RestaurantContext} from "../../util/restaurantContext";
 import {getRestaurantFoodItems, IFoodItemAPI} from "@goodies-tech/api";
+import {getName} from "../../util/utilities";
 
 const { TextField } = Incubator
 
@@ -28,30 +29,22 @@ export const EditFoodScreen = ({ route }) => {
     const content = () => <KeyboardAvoidingView>
         <ScrollView>
             <View padding-15 flex>
-                <TextField value={foodItem.name}
-                           label="Name"
-                           onChangeText={(v) => setFoodItem({ ...foodItem, name: v })}
-                           showCharCounter
-                           maxLength={50}
-                           />
-                <TextField value={foodItem.englishName}
-                           label="English Name"
-                           onChangeText={(v) => setFoodItem({ ...foodItem, englishName: v })}
-                           showCharCounter
-                           maxLength={50}
-                           />
-                <TextField value={foodItem.description}
-                           label="Description"
-                           onChangeText={(v) => setFoodItem({ ...foodItem, description: v })}
-                           showCharCounter
-                           maxLength={200}
-                           />
-                <TextField value={foodItem.englishDescription}
-                           label="English Description"
-                           onChangeText={(v) => setFoodItem({ ...foodItem, englishDescription: v })}
-                           showCharCounter
-                           maxLength={50}
-                           />
+                { Object.keys(foodItem.names).map((lang) => {
+                    return <TextField value={foodItem.names[lang]}
+                                      label={lang}
+                                      onChangeText={(v) => setFoodItem({ ...foodItem, names: { ...foodItem.names, [lang]: v } })}
+                                      showCharCounter
+                                      maxLength={50}
+                                      />
+                })}
+                { Object.keys(foodItem.descriptions).map((lang) => {
+                    return <TextField value={foodItem.descriptions[lang]}
+                                      label={lang}
+                                      onChangeText={(v) => setFoodItem({ ...foodItem, descriptions: { ...foodItem.descriptions, [lang]: v } })}
+                                      showCharCounter
+                                      maxLength={200}
+                                      />
+                })}
                 <TextField value={foodItem.price.toString()}
                            label="Price"
                            validate={'number'}
