@@ -1,31 +1,28 @@
 # goodies/app-merchant
 
 
+# Dev Setup
 
-## Getting Started
+## Enviroment variables
 
-Download links:
+There is a .env.example file in this repo.
 
-SSH clone URL: ssh://git@git.jetbrains.space/goodies/goodies/app-merchant.git
+Clone it and rename it to .env.local
 
-HTTPS clone URL: https://git.jetbrains.space/goodies/goodies/app-merchant.git
+Then get the secrets. Instructions for getting some of the keys are below:
+
+## Quick setup
 
 
+Expo will probably tell you to install xcode. So if you don't have it install it already.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-
-## Prerequisites
-
-What things you need to install the software and how to install them.
-
+```bash
+npm i
+npm run ios
 ```
-Examples
-```
 
-## Deployment
-
-Add additional notes about how to deploy this on a production system.
+In the simulator app that opens, there is a choice to switch which model iphone. You can also press shift + i I think
+inside the terminal running expo.
 
 ## Resources
 
-Add links to external resources for this project, such as CI server, bug tracker, etc.
