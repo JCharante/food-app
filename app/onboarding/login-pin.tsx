@@ -47,6 +47,7 @@ export default function SMSOTPPage () {
 
     const submit = async () => {
         try {
+            setShowLoading(true)
             const req = await checkPIN.mutateAsync({
                 phoneNumber: pncc + pnr,
                 vonageRequestId: requestId,
