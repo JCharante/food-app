@@ -21,6 +21,6 @@ export const GoodiesTextInput = (props: GoodiesTextInputProps) => {
             autoComplete={props.autoComplete === undefined ? 'off': props.autoComplete}
             style={tw.style(`rounded-lg border-primary-100 border text-primary-800 bg-white p-3 mb-1 shadow`)}
         />
-        <Text style={tw`text-xs text-neutral-600`}>*{props.helperText}</Text>
+        {props.helperText && <Text style={tw`text-xs text-neutral-600`}>*{props.helperText}</Text>}
     </View>
 }

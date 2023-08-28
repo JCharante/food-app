@@ -70,6 +70,12 @@ export const useParamFetcher = () => {
         },
         get pnr () {
             return getString(searchParams.pnr || '0')
+        },
+        get name () {
+            return getString(searchParams.name || '')
+        },
+        get promoCode() {
+            return getString(searchParams.promoCode || '')
         }
     }
 }

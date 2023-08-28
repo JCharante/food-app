@@ -5,5 +5,15 @@
   "sms-otp.text-2": "<b>{phoneNumber}</b> by SMS",
   "sign-up.title": "Sign Up",
   "sign-up.getName": "Your name in Goodies",
-  "sign-up.getNameHelper": "You can change this name later"
+  "sign-up.getNameHelper": "You can change this name later",
+  "sign-up.promoCode.label": "Promo code",
+  "sign-up.promoCode.placeholder": "Enter your promo code",
+  "sign-up.data.list.label": "You are",
+  "sign-up.data.list.helperText": "This survey helps us better understand your search needs and is confidential, you can choose to skip",
+  "sign-up.data.vegetarian.title": "Vegetarian",
+  "sign-up.data.vegetarian.description": "Vegetarian does not eat any animal flesh such as meat, poultry, or fish.",
+  "sign-up.data.vegan.title": "Vegan",
+  "sign-up.data.vegan.description": "Veganism is a lifestyle with a vegetarian diet that also avoids consuming dairy, eggs, and any other ingredients derived from animals",
+  "sign-up.data.exploring.title": "Exploring",
+  "sign-up.data.exploring.description": "I'm still exploring"
 }
