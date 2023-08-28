@@ -99,6 +99,20 @@ export default function App() {
                   <RestaurantContext.Provider value={{ restaurant, setRestaurant }}>
                       <NavigationContainer>
                           <Stack.Navigator initialRouteName="Home">
+                              {/* -- Merchant -- */}
+                              <Stack.Screen name="Login"
+                                            component={LoginScreen}
+                                            options={{ headerShown: false }} />
+                              <Stack.Screen name="Home"
+                                            component={HomeScreen}
+                                            options={{ title: 'Goodies.vn Merchant' }}/>
+                              {/* Menu Category */}
+                              <Stack.Screen name="CreateCategory"
+                                            component={CreateCategoryScreen}
+                                            options={{ title: 'CreateCategory' }}/>
+                              <Stack.Screen name="UpdateCategoryScreen"
+                                            component={UpdateCategoryScreen}
+                                            options={{ title: 'Update Category'}}/>
                               {/* Addons */}
                               <Stack.Screen name="ViewAllFoodAddons"
                                             component={ViewAllFoodAddonsScreen}
@@ -113,12 +127,6 @@ export default function App() {
                               <Stack.Screen name="EditAddonCategory"
                                             component={EditAddonCategory}
                                             options={{ title: 'Edit Food Addon Category'}}/>
-                              <Stack.Screen name="Login"
-                                            component={LoginScreen}
-                                            options={{ headerShown: false }} />
-                              <Stack.Screen name="Home"
-                                            component={HomeScreen}
-                                            options={{ title: 'Goodies.vn Merchant' }}/>
                               <Stack.Screen name="ManageRestaurants"
                                             component={ManageRestaurantsScreen}
                                             options={{ title: 'Manage Restaurants' }}/>
@@ -131,12 +139,6 @@ export default function App() {
                               <Stack.Screen name="AllFoods"
                                             component={AllFoodsScreen}
                                             options={{ title: 'All Foods' }}/>
-                              <Stack.Screen name="CreateCategory"
-                                            component={CreateCategoryScreen}
-                                            options={{ title: 'CreateCategory' }}/>
-                              <Stack.Screen name="UpdateCategoryScreen"
-                                            component={UpdateCategoryScreen}
-                                            options={{ title: 'Update Category'}}/>
                               <Stack.Screen name="CreateFood"
                                             component={CreateFoodScreen}
                                             options={{ title: 'Create Food' }}/>

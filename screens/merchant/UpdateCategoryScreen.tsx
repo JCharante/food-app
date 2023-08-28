@@ -9,12 +9,13 @@ import {ScrollView} from "react-native-gesture-handler";
 import {getName} from "../../util/utilities";
 import {trpc} from "../../util/api";
 
-export const UpdateCategoryScreen = ({ route }) => {
+export const UpdateCategoryScreen = ({ navigation, route }) => {
     const { categoryID, restaurantID } = route.params
 
     const categoriesReq = trpc.getRestaurantCategories.useQuery({ restaurantID })
     const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
     const mutatateMenuCategory = trpc.patchMenuCategory.useMutation()
+    const deleteCategory = trpc.deleteMenuCategory.useMutation()
 
     if (!categoriesReq.data || !foodItems.data) return <View><Text>Loading...</Text></View>
 
@@ -39,6 +40,11 @@ export const UpdateCategoryScreen = ({ route }) => {
             items: category.foodItems.map((f) => f._id).concat(itemID)
         })
         await categoriesReq.refetch()
+    }
+
+    const deleteCategoryHandler = async () => {
+        await deleteCategory.mutateAsync({ restaurantID, categoryID })
+        navigation.goBack()
     }
 
     const renderContent = () => <ScrollView>
@@ -77,6 +83,9 @@ export const UpdateCategoryScreen = ({ route }) => {
                                   </Text>
                               </View>
                           </CardItem>)}
+                <CardItem label="Delete Category" color="action" onPress={() => deleteCategoryHandler()}>
+
+                </CardItem>
             </View>
         </View>
     </ScrollView>
