@@ -15,11 +15,9 @@ import {TokenContext} from "../../util/tokenContext";
 export default function SMSOTPPage () {
     const t = useIntl()
     const navigation = useRouter();
-    const { pncc, pnr, requestId } = useParamFetcher()
-    const verify = trpc.user.authSMSVerify.useMutation()
-    const phoneNumberStatus = trpc.user.phoneNumberStatus.useMutation()
-    const checkPIN = trpc.user.checkPIN.useMutation()
     const { token, setToken } = useContext(TokenContext)
+    const { pncc, pnr, requestId } = useParamFetcher()
+    const checkPIN = trpc.user.checkPIN.useMutation()
 
     const [code, setCode] = useState<string>("")
     const [showInvalidCode, setShowInvalidCode] = useState<boolean>(false)
@@ -48,68 +46,26 @@ export default function SMSOTPPage () {
     }, []);
 
     const submit = async () => {
-        setShowLoading(true)
-        let req = await verify.mutateAsync({
-            requestId: requestId,
-            code: code
-        })
-        if (req.success) {
-            console.log(`SMS OTP Verified ${requestId}`)
-            // TODO: show correct code success?
-        } else {
-            // TODO: show wrong code
-            setShowLoading(false)
-            setShowInvalidCode(true)
-            console.log(req)
-            return
-        }
-
         try {
-            // do next request to find out what to do
-            req = await phoneNumberStatus.mutateAsync({
+            const req = await checkPIN.mutateAsync({
                 phoneNumber: pncc + pnr,
-                vonageRequestId: requestId
+                vonageRequestId: requestId,
+                pin: code
             })
-            if (req.accountExists) {
-                console.log('Account exists, should redirect to ask for pin')
-                if (req.requiresPIN) {
-                    setShowLoading(false)
-                    navigation.push(`/onboarding/login-pin?pncc=${
-                        pncc
-                    }&pnr=${
-                        pnr
-                    }&requestId=${
-                        requestId
-                    }`)
-                } else {
-                    // step 4
-                    req = await checkPIN.mutateAsync({
-                        phoneNumber: pncc + pnr,
-                        vonageRequestId: requestId,
-                        pin: '000000' // '000000' is the pin if there is no pin on the account
-                    })
-                    if (req.sessionKey) {
-                        setToken(req.sessionKey)
-                        await AsyncStorage.setItem('token', req.sessionKey)
-                        setShowLoading(false)
-                        navigation.replace(`/`)
-                    } else {
-                        console.error(req, 'no session key')
-                        setShowLoading(false)
-                    }
-                }
-            } else {
+            if (req.sessionKey) {
+                setToken(req.sessionKey)
+                await AsyncStorage.setItem('token', req.sessionKey)
                 setShowLoading(false)
-                console.log(`Account doesn't exist, should redirect to name page`)
-                navigation.push(`/onboarding/name?${`pncc=${pncc}&pnr=${pnr}&requestId=${req.requestId}`}`)
+                navigation.replace(`/`)
+            } else {
+                console.error(req, 'no session key')
+                setShowLoading(false)
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
+            setShowLoading(false)
+            setShowInvalidCode(true)
         }
-
-        // () => navigation.push(`/onboarding/name?${encodeURIComponent(
-        //     `phoneNumber=` + phoneNumber
-        // )}`)
     }
 
     const onCodeChange = (text: string) => {
@@ -121,18 +77,18 @@ export default function SMSOTPPage () {
 
     return <View style={tw`bg-background flex-1`}>
         <Stack.Screen options={{
-            title: t.formatMessage({ id: 'login.title' }),
+            title: t.formatMessage({ id: 'sign-in.pin.signIn' }),
             headerLeft: (props: HeaderBackButtonProps) => (<MaterialIcons name="arrow-back" size={24} color="black" onPress={() => navigation.back()} />),
             headerShadowVisible: false,
             headerStyle: tw`bg-background shadow-none`
         }}/>
         <View style={tw`p-4 flex-1`}>
             <View style={tw`mb-6`}>
-                <Text style={tw`text-primary-800 `}>
-                    {t.formatMessage({ id: 'sms-otp.text-1' })}
+                <Text style={tw`text-primary-800 font-semibold mb-3`}>
+                    {t.formatMessage({ id: 'sign-in.pin.title-1' })}
                 </Text>
                 <Text style={tw`mb-3 text-primary-800 `}>
-                    {t.formatMessage({ id: 'sms-otp.text-2'}, { b: (chunks) => <Text style={tw`font-semibold`}>{chunks}</Text>, phoneNumber: `+${pncc} ${pnr}` } )}
+                    {t.formatMessage({ id: 'sign-in.pin.title-2'}, { b: (chunks) => <Text style={tw`font-semibold`}>{chunks}</Text>, phoneNumber: `+${pncc} ${pnr}` } )}
                 </Text>
                 <TextInput value={code}
                            onChangeText={onCodeChange}
@@ -140,26 +96,25 @@ export default function SMSOTPPage () {
                            style={tw`text-2xl`}
                            autoFocus={true}
                            inputMode="numeric"
-                           autoComplete="sms-otp"
+                           autoComplete="password" // TODO: check if this is correct value
                            textContentType="oneTimeCode"
                 />
                 {showInvalidCode && <View style={tw`flex flex-row items-center mt-1`}>
                     <AntDesign name="closecircle" size={12} color="#EA3942" />
-                    <Text style={tw`ml-2 text-bad-600`}>Invalid or expired code</Text>
+                    <Text style={tw`ml-2 text-bad-600`}>{t.formatMessage({ id: 'sign-in.pin.wrongPIN'})}</Text>
                 </View>}
             </View>
             <View>
-                <Text style={tw`text-primary-600 font-semibold mb-1`}>Didn't receive it?</Text>
-                <View style={tw`flex flex-row`}>
-                    <Text style={tw`text-neutral-900`}>Get a new code in</Text>
-                    <Text style={tw`text-primary-800 font-semibold`}> 90s</Text>
-                </View>
+                <Text style={tw`text-primary-600 font-semibold mb-1`}>{t.formatMessage({ id: 'sign-in.pin.forgotPIN'})}</Text>
             </View>
             <Pressable onPress={() => Keyboard.dismiss()} style={tw.style([
-                isKeyboardVisible ? `h-35` : `flex-1`
+                isKeyboardVisible ? `h-30` : `flex-1`
             ])}></Pressable>
+            <View style={tw`flex flex-row justify-start mb-6`}>
+                <Text style={tw`font-semibold`}>{t.formatMessage({id: 'sign-in.pin.notMyAccount'}, { a: (chunks) => <Text style={tw`text-primary-600`}>{chunks}</Text>})}</Text>
+            </View>
             <View style={tw`flex flex-row justify-center`}>
-                <GoodiesButton title={'Next'}
+                <GoodiesButton title={t.formatMessage({ id: 'sign-in.pin.signIn'})}
                                size={'xl'}
                                isPrimary={true}
                                onPress={submit}
