@@ -5,24 +5,37 @@ import {} from "react-native-ui-lib";
 import {SafeAreaView} from "react-native-safe-area-context";
 import GoodiesWithSlogan from "../../assets/goodies-with-slogan.svg"
 import {LanguageSwitcherContext} from "../../util/hooks";
-import {useContext} from "react";
+import {FC, ReactElement, ReactNode, useContext} from "react";
 import {useIntl} from "react-intl";
+import VnFlag from "../../assets/flag-icons/vn.svg"
+import GbEngFlag from "../../assets/flag-icons/gb-eng.svg"
 
 interface GoodiesButtonProps {
     title: string
     size: 'sm' | 'md' | 'lg'
     isPrimary: boolean
     onPress: () => void
+    leftSvg?: ReactElement
+    fontBold?: boolean
 }
 
-export function GoodiesButton(props: GoodiesButtonProps) {
+export function GoodiesButton({ fontBold = true, ...props }: GoodiesButtonProps) {
     return <Pressable onPress={props.onPress} style={tw.style(
-        `rounded-lg font-bold m-2`,
+        `rounded-lg m-2`,
         props.isPrimary ? `bg-[#797979]` : `bg-[#EAEAEA]`,
         props.size === 'lg' && `basis-1/2 p-4`,
         props.size === 'md' && `basis-1/2 p-2`,
         props.size === 'sm' && `basis-1/4 p-2`)}>
-            <Text style={tw.style(`text-center`, props.isPrimary ? `text-white` : `text-black`)}>{props.title}</Text>
+            <>
+                <View style={tw`flex flex-row w-full items-center justify-center`}>
+                    {props.leftSvg}
+                    <Text style={tw.style(`text-center`,
+                        fontBold ? `font-bold` : null,
+                        props.isPrimary ? `text-white` : `text-black`,
+                        props.leftSvg !== undefined && `ml-2`
+                    )}>{props.title}</Text>
+                </View>
+            </>
         </Pressable>
 
 }
@@ -41,12 +54,14 @@ export default function LanguageSelect() {
                 <GoodiesButton title={"English"}
                                isPrimary={locale === 'en'}
                                onPress={() => setLocale('en')}
+                               leftSvg={<GbEngFlag height={"100%"} width={"15%"}/>}
                                size="lg"/>
             </View>
             <View style={tw`flex flex-row w-full justify-center items-center`}>
                 <GoodiesButton title={"Tiếng Việt"}
                                isPrimary={locale === 'vi'}
                                onPress={() => setLocale('vi')}
+                               leftSvg={<VnFlag height={"100%"} width={"15%"}/>}
                                size="lg"/>
             </View>
             <View style={tw`flex-1`}></View>
