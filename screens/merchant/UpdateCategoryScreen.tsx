@@ -14,6 +14,7 @@ export const UpdateCategoryScreen = ({ route }) => {
 
     const categoriesReq = trpc.getRestaurantCategories.useQuery({ restaurantID })
     const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
+    const mutatateMenuCategory = trpc.patchMenuCategory.useMutation()
 
     if (!categoriesReq.data || !foodItems.data) return <View><Text>Loading...</Text></View>
 
@@ -21,36 +22,23 @@ export const UpdateCategoryScreen = ({ route }) => {
 
     if (category === undefined) return <View><Text>An error occurred when loading category information</Text></View>
 
-    // const { restaurant, setRestaurant } = useContext(RestaurantContext)
-    // const [category, setCategory] = useState<IMenuCategoryAPI | null>(null)
-    // const [foodItems, setFoodItems] = useState<IFoodItemAPI[]>([])
-
-    // useEffect(() => {
-    //     (async() => {
-    //         console.log(`Fetching data for UpdateCategoryScreen/${categoryID}`)
-    //         const categoryData = await getMenuCategories(token, restaurant._id)
-    //         setCategory(categoryData.find((c) => c._id === categoryID))
-    //         const data = await getRestaurantFoodItems(token, restaurant._id);
-    //         setFoodItems(data)
-    //     })()
-    // }, [])
 
     const removeItem = async (itemID: string) => {
-        // console.log(`Removing ${itemID} from ${category._id}`)
-        // const newFoodItems = category.foodItems.map((f) => f._id).filter((f) => f !== itemID)
-        // await PatchMenuCategoryFoodItems(token, restaurant._id, category._id, newFoodItems)
-        // // get restaurant info again
-        // const categoryData = await getMenuCategories(token, restaurant._id)
-        // setCategory(categoryData.find((c) => c._id === category._id))
+        await mutatateMenuCategory.mutateAsync({
+            restaurantID,
+            categoryID,
+            items: category.foodItems.map((f) => f._id).filter((f) => f !== itemID)
+        })
+        await categoriesReq.refetch()
     }
 
     const addItem = async(itemID: string) => {
-        // console.log(`Adding ${itemID} to ${category._id}`)
-        // const newFoodItems = category.foodItems.map((f) => f._id).concat(itemID)
-        // await PatchMenuCategoryFoodItems(token, restaurant._id, category._id, newFoodItems)
-        // // get restaurant info again
-        // const categoryData = await getMenuCategories(token, restaurant._id)
-        // setCategory(categoryData.find((c) => c._id === category._id))
+        await mutatateMenuCategory.mutateAsync({
+            restaurantID,
+            categoryID,
+            items: category.foodItems.map((f) => f._id).concat(itemID)
+        })
+        await categoriesReq.refetch()
     }
 
     const renderContent = () => <ScrollView>
