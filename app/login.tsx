@@ -5,7 +5,7 @@ import {ScrollView, Text } from "react-native";
 import {Button, Colors, TextField, View} from "react-native-ui-lib";
 import {px} from "../util/utilities";
 import {baseURL, trpc} from "../util/api";
-import {useRouter} from "expo-router";
+import {Stack, useRouter} from "expo-router";
 
 export default function LoginScreen () {
     const navigation = useRouter()
@@ -32,7 +32,7 @@ export default function LoginScreen () {
         // @ts-ignore
         emailField.current.focus()
     }, [])
-    // Update to use keybaord avoiding view
+    // Update to use keyboard avoiding view
     return (
         <ScrollView style={{ 'display': 'flex' }}
                     contentContainerStyle={{
@@ -41,6 +41,7 @@ export default function LoginScreen () {
                         marginTop: 200
                     }}
         >
+            <Stack.Screen options={{ title: 'Sign in / Sign up', headerBackVisible: false }}/>
             <View flex style={{ maxWidth: 400, width: '70%'}}>
                 <View flex centerH>
                     <Text>Login with Email</Text>
