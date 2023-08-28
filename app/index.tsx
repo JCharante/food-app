@@ -23,7 +23,7 @@ export const Index = () => {
                 // TODO: check if token is valid / expired
                 setToken(value)
                 // TODO: redirect without allowing back button
-                navigation.push('/home')
+                navigation.push('/root/home')
             }
         }
 

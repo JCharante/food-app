@@ -94,6 +94,7 @@ export default function App() {
                                 <LanguageSwitcherContext.Provider value={{locale, setLocale}}>
                                     <Stack>
                                         <Stack.Screen name="modal" options={{presentation: "modal"}}/>
+                                        <Stack.Screen name="root" options={{headerShown: false}}/>
                                     </Stack>
                                 </LanguageSwitcherContext.Provider>
                             </IntlProvider>
