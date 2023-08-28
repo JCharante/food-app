@@ -12,7 +12,7 @@ import GbEngFlag from "../../assets/flag-icons/gb-eng.svg"
 
 interface GoodiesButtonProps {
     title: string
-    size: 'sm' | 'md' | 'lg'
+    size: 'sm' | 'md' | 'lg' | 'xl'
     isPrimary: boolean
     onPress: () => void
     leftSvg?: ReactElement
@@ -21,8 +21,9 @@ interface GoodiesButtonProps {
 
 export function GoodiesButton({ fontBold = true, ...props }: GoodiesButtonProps) {
     return <Pressable onPress={props.onPress} style={tw.style(
-        `rounded-lg m-2`,
-        props.isPrimary ? `bg-[#797979]` : `bg-[#EAEAEA]`,
+        `rounded-[22] m-2`,
+        props.isPrimary ? `bg-primary` : `bg-opacity-0 border border-primary`,
+        props.size === 'xl' && `basis-1/2 pt-[12] pb-[12] pl-[32] pr-[32]`,
         props.size === 'lg' && `basis-1/2 p-4`,
         props.size === 'md' && `basis-1/2 p-2`,
         props.size === 'sm' && `basis-1/4 p-2`)}>
@@ -31,7 +32,7 @@ export function GoodiesButton({ fontBold = true, ...props }: GoodiesButtonProps)
                     {props.leftSvg}
                     <Text style={tw.style(`text-center`,
                         fontBold ? `font-bold` : null,
-                        props.isPrimary ? `text-white` : `text-black`,
+                        props.isPrimary ? `text-white` : `text-primary`,
                         props.leftSvg !== undefined && `ml-2`
                     )}>{props.title}</Text>
                 </View>
@@ -56,21 +57,21 @@ export default function LanguageSelect() {
                                isPrimary={locale === 'en'}
                                onPress={() => setLocale('en')}
                                leftSvg={<GbEngFlag height={"100%"} width={"15%"}/>}
-                               size="lg"/>
+                               size="xl"/>
             </View>
             <View style={tw`flex flex-row w-full justify-center items-center`}>
                 <GoodiesButton title={"Tiếng Việt"}
                                isPrimary={locale === 'vi'}
                                onPress={() => setLocale('vi')}
                                leftSvg={<VnFlag height={"100%"} width={"15%"}/>}
-                               size="lg"/>
+                               size="xl"/>
             </View>
             <View style={tw`flex-1`}></View>
             <View style={tw`flex flex-row w-full justify-center items-center mb-8`}>
                 <GoodiesButton title={t.formatMessage({ id: 'languageSelector.next' })}
                                isPrimary={true}
                                onPress={() => navigation.push('/onboarding/enterPhoneNumber')}
-                               size="lg"/>
+                               size="xl"/>
             </View>
         </View>
     </SafeAreaView>)
