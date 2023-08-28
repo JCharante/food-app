@@ -1,8 +1,7 @@
 import {View, Text, Card} from "react-native-ui-lib";
 import {useContext, useEffect, useState} from "react";
-import {IFoodItem, IGetUserRestaurantsObject, IMenuCategory} from "../util/types";
 import {TokenContext} from "../util/tokenContext";
-import {getMenuCategories, getRestaurantFoodItems, getRestaurants} from "../util/api";
+import {getMenuCategories, IMenuCategoryAPI, getRestaurantFoodItems, IFoodItemAPI} from '@goodies-tech/api'
 import {ScrollView} from "react-native-gesture-handler";
 import {RestaurantContext} from "../util/restaurantContext";
 import { CardItem } from "../components/CardItem";
@@ -10,8 +9,8 @@ import { CardItem } from "../components/CardItem";
 export const UpdateMenuScreen = ({ navigation, route }) => {
     const { token } = useContext(TokenContext)
     const { restaurant } = useContext(RestaurantContext)
-    const [categories, setCategories] = useState<IMenuCategory[]>([])
-    const [foodItems, setFoodItems] = useState<IFoodItem[]>([])
+    const [categories, setCategories] = useState<IMenuCategoryAPI[]>([])
+    const [foodItems, setFoodItems] = useState<IFoodItemAPI[]>([])
     useEffect(() => {
         // Fetch data on page load / when token changes
         (async () => {

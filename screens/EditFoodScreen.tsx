@@ -2,23 +2,22 @@ import {View, Text, Incubator} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import {KeyboardAvoidingView} from "react-native";
 import {useContext, useEffect, useState} from "react";
-import {IFoodItem} from "../util/types";
 import {TokenContext} from "../util/tokenContext";
-import {getRestaurantFoodItems} from "../util/api";
 import {RestaurantContext} from "../util/restaurantContext";
+import {getRestaurantFoodItems, IFoodItemAPI} from "@goodies-tech/api";
 
 const { TextField } = Incubator
 
 export const EditFoodScreen = ({ route }) => {
     const { food } = route.params
     const foodID = food._id
-    const [foodItem, setFoodItem] = useState<IFoodItem | null>(null)
+    const [foodItem, setFoodItem] = useState<IFoodItemAPI | null>(null)
     const { token } = useContext(TokenContext)
     const { restaurant } = useContext(RestaurantContext)
 
     const fetchFoodItem = async () => {
         console.log(`Fetching data for EditFoodScreen/${foodID}`)
-        const data = await getRestaurantFoodItems(token, restaurant._id)
+        const data = await getRestaurantFoodItems(token, restaurant._id);
         setFoodItem(data.find((f) => f._id === foodID))
     }
 
@@ -28,7 +27,7 @@ export const EditFoodScreen = ({ route }) => {
 
     const content = () => <KeyboardAvoidingView>
         <ScrollView>
-            <View padding-15>
+            <View padding-15 flex>
                 <TextField value={foodItem.name}
                            label="Name"
                            onChangeText={(v) => setFoodItem({ ...foodItem, name: v })}

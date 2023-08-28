@@ -1,8 +1,7 @@
 import {View, Text, Card} from "react-native-ui-lib";
 import {RestaurantContext} from "../util/restaurantContext";
 import {useContext, useEffect, useState} from "react";
-import {IFoodItem, IMenuCategory} from "../util/types";
-import {getMenuCategories, getRestaurantFoodItems, getRestaurants, PatchMenuCategoryFoodItems} from "../util/api";
+import {getMenuCategories, getRestaurantFoodItems, IFoodItemAPI, IMenuCategoryAPI, PatchMenuCategoryFoodItems} from '@goodies-tech/api'
 import {TokenContext} from "../util/tokenContext";
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons'
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
@@ -12,16 +11,16 @@ import {ScrollView} from "react-native-gesture-handler";
 export const UpdateCategoryScreen = ({ route }) => {
     const { token } = useContext(TokenContext)
     const { restaurant, setRestaurant } = useContext(RestaurantContext)
-    const [category, setCategory] = useState<IMenuCategory | null>(null)
-    const [foodItems, setFoodItems] = useState<IFoodItem[]>([])
-    const categoryID = route.params.category._id
+    const [category, setCategory] = useState<IMenuCategoryAPI | null>(null)
+    const [foodItems, setFoodItems] = useState<IFoodItemAPI[]>([])
+    const categoryID: string = route.params.category._id
 
     useEffect(() => {
         (async() => {
             console.log(`Fetching data for UpdateCategoryScreen/${categoryID}`)
             const categoryData = await getMenuCategories(token, restaurant._id)
             setCategory(categoryData.find((c) => c._id === categoryID))
-            const data = await getRestaurantFoodItems(token, restaurant._id)
+            const data = await getRestaurantFoodItems(token, restaurant._id);
             setFoodItems(data)
         })()
     }, [])
