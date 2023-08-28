@@ -3,6 +3,7 @@ import {useContext, useEffect} from "react";
 import {TokenContext} from "../util/tokenContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Pressable} from "react-native";
+import {CardItem} from "../components/CardItem";
 
 export const HomeScreen = ({ navigation }) => {
     const { token, setToken } = useContext(TokenContext)
@@ -22,10 +23,9 @@ export const HomeScreen = ({ navigation }) => {
         fun().catch(e => console.log(e))
     }, [])
 
-    return token !== '' ? (<View>
-        <Text>Home Screen</Text>
-        <Pressable onPress={() => {navigation.navigate('ManageRestaurants')}}>
-            <Text>Manage Restaurants</Text>
-        </Pressable>
+    return token !== '' ? (<View padding-15>
+        <CardItem label="Home Screen" />
+        <CardItem onPress={() => {navigation.navigate('ManageRestaurants')}}
+                  label="Manage Restaurants" />
     </View>) : null
 }

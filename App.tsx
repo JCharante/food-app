@@ -9,6 +9,11 @@ import { LoginScreen } from "./screens/LoginScreen";
 import { HomeScreen } from "./screens/HomeScreen";
 import { TokenContext } from './util/tokenContext'
 import { ManageRestaurantsScreen } from './screens/ManageRestaurantsScreen';
+import { RestaurantScreen } from './screens/RestaurantScreen';
+import { UpdateMenuScreen } from './screens/UpdateMenuScreen';
+import {UpdateCategoryScreen} from "./screens/UpdateCategoryScreen";
+import {RestaurantContext} from "./util/restaurantContext";
+import { AddFoodToCategoryScreen } from './screens/AddFoodToCategoryScreen';
 
 
 
@@ -43,16 +48,37 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
     const [token, setToken] = React.useState('')
+    const [restaurant, setRestaurant] = React.useState(null)
     // @ts-ignore
     return (
       <TokenContext.Provider value={{ token, setToken }}>
-          <NavigationContainer>
-              <Stack.Navigator initialRouteName="Home">
-                  <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-                  <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Goodies.vn Merchant' }}/>
-                  <Stack.Screen name="ManageRestaurants" component={ManageRestaurantsScreen} options={{ title: 'Manage Restaurants' }}/>
-              </Stack.Navigator>
-          </NavigationContainer>
+          <RestaurantContext.Provider value={{ restaurant, setRestaurant }}>
+              <NavigationContainer>
+                  <Stack.Navigator initialRouteName="Home">
+                      <Stack.Screen name="Login"
+                                    component={LoginScreen}
+                                    options={{ headerShown: false }} />
+                      <Stack.Screen name="Home"
+                                    component={HomeScreen}
+                                    options={{ title: 'Goodies.vn Merchant' }}/>
+                      <Stack.Screen name="ManageRestaurants"
+                                    component={ManageRestaurantsScreen}
+                                    options={{ title: 'Manage Restaurants' }}/>
+                      <Stack.Screen name="Restaurant"
+                                    component={RestaurantScreen}
+                                    options={{ title: restaurant?.name}}/>
+                      <Stack.Screen name="UpdateMenu"
+                                    component={UpdateMenuScreen}
+                                    options={{ title: 'Update Menu' }}/>
+                      <Stack.Screen name="UpdateCategoryScreen"
+                                    component={UpdateCategoryScreen}
+                                    options={{ title: 'Update Category'}}/>
+                      <Stack.Screen name="AddFoodToCategory"
+                                    component={AddFoodToCategoryScreen}
+                                    options={{ title: 'Add/Remove Food'}}/>
+                  </Stack.Navigator>
+              </NavigationContainer>
+          </RestaurantContext.Provider>
       </TokenContext.Provider>
     );
 }

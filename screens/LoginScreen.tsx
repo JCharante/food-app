@@ -35,7 +35,7 @@ export const LoginScreen = ({ navigation }) => {
         // @ts-ignore
         emailField.current.focus()
     }, [])
-
+    // Update to use keybaord avoiding view
     return (
         <ScrollView style={{ 'display': 'flex' }}
                     contentContainerStyle={{

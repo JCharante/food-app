@@ -3,9 +3,11 @@ import {useContext, useEffect, useState} from "react";
 import {getRestaurants} from "../util/api";
 import {IGetUserRestaurantsObject} from "../util/types";
 import {TokenContext} from "../util/tokenContext";
+import {RestaurantContext} from "../util/restaurantContext";
 
 export const ManageRestaurantsScreen = ({ navigation }) => {
     const { token } = useContext(TokenContext)
+    const { setRestaurant } = useContext(RestaurantContext)
     const [restaurants, setRestaurants] = useState<Array<IGetUserRestaurantsObject>>([])
 
     useEffect(() => {
@@ -14,7 +16,6 @@ export const ManageRestaurantsScreen = ({ navigation }) => {
             if (token === '') return
 
             const data = await getRestaurants(token)
-            console.log(data)
             setRestaurants(data)
         })()
     }, [token])
@@ -28,11 +29,10 @@ export const ManageRestaurantsScreen = ({ navigation }) => {
                          row
                          height={90}
                          borderRadius={20}
-                         onPress={() => navigation.navigate('Restaurant',
-                             {
-                                 restaurantID: restaurant._id,
-                                 restaurantName: restaurant.name
-                             })}
+                         onPress={() => {
+                             setRestaurant(restaurant)
+                             navigation.navigate('Restaurant')}
+                         }
             >
                 <Card.Section imageSource={{ url: 'https://placekitten.com/250/250'}}
                               imageStyle={{width: 96, height: 96}} />
