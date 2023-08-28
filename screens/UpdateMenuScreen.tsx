@@ -5,6 +5,7 @@ import {TokenContext} from "../util/tokenContext";
 import {getMenuCategories, getRestaurantFoodItems, getRestaurants} from "../util/api";
 import {ScrollView} from "react-native-gesture-handler";
 import {RestaurantContext} from "../util/restaurantContext";
+import { CardItem } from "../components/CardItem";
 
 export const UpdateMenuScreen = ({ navigation, route }) => {
     const { token } = useContext(TokenContext)
@@ -67,15 +68,20 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                 })}
                 <Text style={{ fontSize: 20 }}>Food:</Text>
                 {foodItems.map((food) => {
-                    return <Card key={food._id}
-                                 style={{ marginBottom: 5, marginTop: 5 }}
-                                 row
-                                 height={90}
-                                 borderRadius={20}>
+                    return <CardItem key={food._id}>
                         <View padding-15 flex>
                             <Text>{food.name}</Text>
                         </View>
-                    </Card>
+                        <View flex
+                              right>
+                            <Text onPress={() => navigation.navigate(
+                                'EditFoodScreen',
+                                {
+                                    food: food
+                                }
+                            )}>Edit</Text>
+                        </View>
+                    </CardItem>
                 })}
             </View>
         </View>

@@ -12,11 +12,15 @@ import {ScrollView} from "react-native-gesture-handler";
 export const UpdateCategoryScreen = ({ route }) => {
     const { token } = useContext(TokenContext)
     const { restaurant, setRestaurant } = useContext(RestaurantContext)
-    const [category, setCategory] = useState<IMenuCategory>(route.params.category)
+    const [category, setCategory] = useState<IMenuCategory | null>(null)
     const [foodItems, setFoodItems] = useState<IFoodItem[]>([])
+    const categoryID = route.params.category._id
 
     useEffect(() => {
         (async() => {
+            console.log(`Fetching data for UpdateCategoryScreen/${categoryID}`)
+            const categoryData = await getMenuCategories(token, restaurant._id)
+            setCategory(categoryData.find((c) => c._id === categoryID))
             const data = await getRestaurantFoodItems(token, restaurant._id)
             setFoodItems(data)
         })()
@@ -40,7 +44,7 @@ export const UpdateCategoryScreen = ({ route }) => {
         setCategory(categoryData.find((c) => c._id === category._id))
     }
 
-    return <ScrollView>
+    const renderContent = () => <ScrollView>
         <View padding-15>
             <Text>Category name: {category.name}</Text>
             <Text>Food Items:</Text>
@@ -78,5 +82,7 @@ export const UpdateCategoryScreen = ({ route }) => {
                           </CardItem>)}
             </View>
         </View>
-    </ScrollView>;
+    </ScrollView>
+
+    return category === null ? <Text>Loading...</Text> : renderContent();
 }

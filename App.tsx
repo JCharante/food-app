@@ -13,7 +13,7 @@ import { RestaurantScreen } from './screens/RestaurantScreen';
 import { UpdateMenuScreen } from './screens/UpdateMenuScreen';
 import {UpdateCategoryScreen} from "./screens/UpdateCategoryScreen";
 import {RestaurantContext} from "./util/restaurantContext";
-import { AddFoodToCategoryScreen } from './screens/AddFoodToCategoryScreen';
+import { EditFoodScreen } from './screens/EditFoodScreen';
 
 
 
@@ -73,9 +73,9 @@ export default function App() {
                       <Stack.Screen name="UpdateCategoryScreen"
                                     component={UpdateCategoryScreen}
                                     options={{ title: 'Update Category'}}/>
-                      <Stack.Screen name="AddFoodToCategory"
-                                    component={AddFoodToCategoryScreen}
-                                    options={{ title: 'Add/Remove Food'}}/>
+                      <Stack.Screen name="EditFoodScreen"
+                                    component={EditFoodScreen}
+                                    options={{ title: 'Update Food' }}/>
                   </Stack.Navigator>
               </NavigationContainer>
           </RestaurantContext.Provider>

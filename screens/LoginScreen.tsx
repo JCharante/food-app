@@ -4,6 +4,7 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import {ScrollView, Text } from "react-native";
 import {Button, Colors, TextField, View} from "react-native-ui-lib";
 import {px} from "../util/utilities";
+import {baseURL} from "../util/api";
 
 export const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('email');
@@ -13,7 +14,7 @@ export const LoginScreen = ({ navigation }) => {
 
     const submit = async () => {
         console.log('Sending login request')
-        const res = await fetch('http://127.0.0.1:3000/login/email', {
+        const res = await fetch(`${baseURL}/login/email`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'

@@ -1,6 +1,6 @@
 import {IFoodItem, IGetUserRestaurantsObject, IMenuCategory} from "./types";
 
-const baseURL = 'http://127.0.0.1:3000'
+export const baseURL = 'http://192.168.18.205:3000'
 
 // TODO: handle errors
 export const getRestaurants = async (token): Promise<Array<IGetUserRestaurantsObject>> => {
@@ -16,7 +16,7 @@ export const getRestaurants = async (token): Promise<Array<IGetUserRestaurantsOb
         return data
     } else {
         console.error(response) // log this?
-        throw (response)
+        return []
     }
 }
 
