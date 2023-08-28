@@ -117,6 +117,8 @@ export function GoodiesPhoneNumberInput(props: GoodiesPhoneNumberInput) {
                             <Text style={tw``}>{section.title}</Text>
                         </View>
                     )}
+                    initialNumToRender={30}
+                    maxToRenderPerBatch={50}
                 />
             </SafeAreaView>
         </Modal>
