@@ -33,6 +33,8 @@ const getIcon = (name: string) => {
             return <IconNearby/>
         case 'promo':
             return <IconPromo/>
+        case 'breakfast':
+            return <IconBreakfast/>
         case 'brunch':
             return <IconBrunch/>
         case 'burger':
@@ -73,10 +75,6 @@ interface IRestaurantCategory {
     id: number
     names: {[languageCode: string]: string}
 }
-
-const activeCategories: Array<IRestaurantCategory> = [
-
-]
 
 export default function HomeIndex() {
     const navigation = useRouter()
