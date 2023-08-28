@@ -87,13 +87,23 @@ export default function HomeIndex() {
     const t = useIntl()
     const nameReq = trpc.user.userInfo.useQuery()
     const [searchText, setSearchText] = useState<string>('')
+    const [latlong, setLatlong] = useState<{latitude: number, longitude: number}>({latitude: 0, longitude: 0})
+    const reverseGeoEncodeReq = trpc.geo.getCurrentPlace.useQuery(latlong, { enabled: latlong.longitude !== 0})
 
     useEffect(() => {
         (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                console.log('Permission to access location was denied');
+                return;
+            }
+
             const req = await Location.getCurrentPositionAsync()
             console.log(req)
+
+            setLatlong(req.coords)
         })()
-    }, [])
+    }, [searchText])
 
     // todo: update current language to use language from context
     const categoryElements = useMemo(() => {
@@ -111,6 +121,8 @@ export default function HomeIndex() {
         }
     }, [restaurantCategoriesReq.data])
 
+    const displayedAddress = reverseGeoEncodeReq.data && reverseGeoEncodeReq.data.length > 0 ? reverseGeoEncodeReq.data[0].name : 'Pick Address'
+
     return (
         <SafeAreaView style={tw`flex flex-1`}>
             <View style={tw`flex flex-1 p-4`}>
@@ -118,7 +130,7 @@ export default function HomeIndex() {
                 <View style={tw`flex flex-row`}>
                     <View style={tw`flex flex-col`}>
                         <Text style={tw`font-semibold text-neutral-800`}>Good morning, {nameReq.data ? nameReq.data : ''}</Text>
-                        <Text style={tw`text-xs text-neutral-700`}>19 Cao Ba Quat, Ba Dinh, Ha Noi</Text>
+                        <Text style={tw`text-xs text-neutral-700`}>{reverseGeoEncodeReq.data ? displayedAddress : 'Loading...'}</Text>
                     </View>
                     <View style={tw`flex flex-1`}></View>
                     <GoodiesSquareLogo/>

@@ -1,5 +1,5 @@
 
-export const baseURL = 'https://9ecc-2001-ee0-4f8f-8780-31-30f4-1bcb-4c1a.ngrok-free.app' // http://127.0.0.1:3000'
+export const baseURL = 'https://5872-2001-ee0-4161-c8e4-b065-4370-d541-3203.ngrok-free.app' // http://127.0.0.1:3000'
 
 import { createTRPCReact } from '@trpc/react-query';
 import type { AppRouter } from '@goodies-tech/api';

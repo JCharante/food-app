@@ -4,7 +4,7 @@ const { getDefaultConfig } = require('expo/metro-config');
 // Absolute path to your package
 // This is so we import the api directly so we can tRPC types as soon as we modify them
 const packagePath =
-    '/Users/jyan/WebstormProjects/api';
+    '/Users/jyan/Documents/api';
 
 
 module.exports = (async () => {
