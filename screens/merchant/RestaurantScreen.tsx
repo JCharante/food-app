@@ -5,35 +5,21 @@ import {trpc} from "../../util/api";
 import * as ImagePicker from 'expo-image-picker';
 import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
 import {Platform} from "react-native";
-import * as FileSystem from 'expo-file-system';
-import base64 from 'react-native-base64';
 
 
 export const RestaurantScreen = ({ navigation, route  }) => {
     const restaurantID = route.params.restaurantID
     const restaurants = trpc.userGetRestaurants.useQuery()
     const postImageMutation = trpc.postRestaurantImage.useMutation()
-    if (!restaurants.data) return <View><Text>Loading...</Text></View>
+    const restaurantImageReq = trpc.getRestaurantImage.useQuery({ restaurantID })
+
+    if (!restaurants.data || !restaurantImageReq.data) return <View><Text>Loading...</Text></View>
 
     const data = restaurants.data
 
     const shop = data[data.findIndex((r) => r._id.toString() === restaurantID)]
 
-    const getBlob = async (fileUri) => {
-        const resp = await fetch(fileUri);
-        const imageBody = await resp.blob();
-        return imageBody;
-    };
-
-    const uploadImage = async (uploadUrl, fields, data) => {
-        const imageBody = await getBlob(data);
-
-        return fetch(uploadUrl, {
-            ...fields,
-            method: "POST",
-            body: imageBody,
-        });
-    };
+    console.log(restaurantImageReq.data)
 
     const newPictureFlow = async () => {
         let pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -43,9 +29,9 @@ export const RestaurantScreen = ({ navigation, route  }) => {
             quality: 1
         });
 
-        console.log(pickerResult)
+        // console.log(pickerResult.assets)
 
-        if (pickerResult.canceled === true) return
+        if (pickerResult.assets.length === 0) return
 
         const img = await manipulateAsync(
             pickerResult.assets[0].uri,
@@ -53,11 +39,11 @@ export const RestaurantScreen = ({ navigation, route  }) => {
             { format: SaveFormat.JPEG, compress: 1, base64: false }
         )
 
-        console.log(img)
+        // console.log(img)
 
 
         const url = await postImageMutation.mutateAsync({ restaurantID })
-        console.log({ url })
+        // console.log({ url })
 
         const localUri = img.uri;
         const fileExtension = localUri.split('.').pop();
@@ -66,6 +52,7 @@ export const RestaurantScreen = ({ navigation, route  }) => {
 
         // Append the file to the FormData instance
         if (Platform.OS === 'android') {
+            console.error('Uploading from android not yet supported')
         } else {
             const response = await fetch(localUri);
             const blob = await response.blob();

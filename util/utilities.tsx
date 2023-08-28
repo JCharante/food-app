@@ -7,5 +7,13 @@ export const formatPrice = (price: number) => {
 }
 
 export const getName = (nameMap: { [languageCode: string]: string }, currentLanguage: string='en') => {
-    return nameMap[currentLanguage] || nameMap['en'] || nameMap['vi'] || ''
+    if (currentLanguage in nameMap) {
+        return nameMap[currentLanguage]
+    } else if ('en' in nameMap) {
+        return nameMap.en
+    } else if ('vi' in nameMap) {
+        return nameMap.vi
+    } else {
+        return ''
+    }
 }
