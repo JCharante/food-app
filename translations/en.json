@@ -1,4 +1,5 @@
 {
   "languageSelector.next": "Next",
-  "login.title": "Login / Sign up"
+  "login.title": "Login / Sign up",
+  "sms-otp.text": "Enter the 6-digit code sent to {phoneNumber} by SMS"
 }

@@ -135,7 +135,7 @@ export function GoodiesPhoneNumberInput(props: GoodiesPhoneNumberInput) {
                        autoComplete="tel"
                        autoFocus={true}
                        placeholder={"Phone number"}
-                       returnKeyType="done"
+                       // returnKeyType="done" // bring back in case Next button isn't going up
                        style={tw`rounded-r-lg border-t border-b border-r border-gray-300 py-2 pr-2 pl-1 flex-1  h-full`}/>
         </View>
     </>

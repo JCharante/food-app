@@ -6,6 +6,8 @@ import {Keyboard, Pressable, Text, TextInput, View} from "react-native";
 import {useEffect, useState} from "react";
 import {GoodiesPhoneNumberInput} from "../../components/GoodiesPhoneNumberInput";
 import {GoodiesButton} from "../../components/GoodiesButton";
+import {HeaderBackButtonProps} from "@react-navigation/native-stack/src/types";
+import {MaterialIcons} from "@expo/vector-icons";
 
 
 interface GoodiesTextInputProps {
@@ -39,9 +41,11 @@ export function GoodiesTextInput({ clearButtonMode = 'while-editing',
 export default function EnterPhoneMumber() {
     const t = useIntl()
     const navigation = useRouter();
+
     const [phoneNumber, setPhoneNumber] = useState<string>("")
     const [validPhoneNumber, setValidPhoneNumber] = useState<boolean>(false)
     const [countryCode, setCountryCode] = useState<string>("VN")
+
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     useEffect(() => {
@@ -66,7 +70,11 @@ export default function EnterPhoneMumber() {
 
 
     return (<SafeAreaView style={tw`bg-white flex w-full h-full`}>
-        <Stack.Screen options={{ title: t.formatMessage({ id: 'login.title' })}}/>
+        <Stack.Screen options={{
+            title: t.formatMessage({ id: 'login.title' }),
+            headerLeft: (props: HeaderBackButtonProps) => (<MaterialIcons name="arrow-back" size={24} color="black" onPress={() => navigation.back()} />),
+            headerShadowVisible: false
+        }}/>
         <View style={tw`flex flex-col w-full h-full justify-between pl-8 pr-8`}>
             <View style={tw`flex flex-col justify-center items-center content-center w-full`}>
                 <View style={tw`flex flex-row w-full justify-start`}>
@@ -84,7 +92,7 @@ export default function EnterPhoneMumber() {
             <View style={tw`flex flex-row w-full justify-center items-center mb-8`}>
                 <GoodiesButton title={t.formatMessage({ id: 'languageSelector.next' })}
                                isPrimary={true}
-                               onPress={() => {}}
+                               onPress={() => navigation.push(`/onboarding/sms-otp?phoneNumber=${encodeURIComponent(phoneNumber)}`)}
                                active={validPhoneNumber}
                                size="xl"/>
             </View>

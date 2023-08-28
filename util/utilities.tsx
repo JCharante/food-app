@@ -51,6 +51,9 @@ export const useParamFetcher = () => {
         },
         get addonCategoryID () {
             return getNumber(searchParams.addonCategoryID?.toString() || '0')
+        },
+        get phoneNumber () {
+            return searchParams.phoneNumber || '0'
         }
     }
 }
