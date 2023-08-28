@@ -5,17 +5,19 @@ import {getName} from "../../util/utilities";
 import {trpc} from "../../util/api";
 import {inferRouterOutputs} from "@trpc/server";
 import {AppRouter} from "@goodies-tech/api";
+import {useRefetchOnFocus} from "../../util/hooks";
 
 export const UpdateMenuScreen = ({ navigation, route }) => {
     const restaurantID = route.params.restaurantID
-    type RouterOutput = inferRouterOutputs<AppRouter>
-    const categories: RouterOutput['getRestaurantCategories'] = trpc.getRestaurantCategories.useQuery({ restaurantID })
-    const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
+    const categoriesReq = trpc.getRestaurantCategories.useQuery({ restaurantID })
+    useRefetchOnFocus(categoriesReq.refetch)
     const restaurantsReq = trpc.userGetRestaurants.useQuery()
+    useRefetchOnFocus(restaurantsReq.refetch)
     const menuMutation = trpc.patchRestaurantMenu.useMutation()
 
-    if (!restaurantsReq.data || !categories.data || !foodItems.data) return <View><Text>Loading...</Text></View>
-
+    if (!restaurantsReq.data || !categoriesReq.data) return <View><Text>Loading...</Text></View>
+    // type RouterOutput = inferRouterOutputs<AppRouter>
+    // const categoriesData: RouterOutput['getRestaurantCategories'] = categoriesReq.data
     const restaurant = restaurantsReq.data.find((r) => r._id === restaurantID)
     console.log(restaurant.menu)
 
@@ -65,8 +67,11 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                 <CardItem label="View all Foods"
                           color="action"
                           onPress={() => navigation.navigate('AllFoods', { restaurantID })} />
+                <CardItem label="View all Food Addons"
+                          color="action"
+                          onPress={() => navigation.navigate('ViewAllFoodAddons', { restaurantID })} />
                 <Text style={{ fontSize: 20 }}>Menu Categories:</Text>
-                {categories.data.map((cat) => {
+                {categoriesReq.data.map((cat) => {
                     return <Card key={cat._id}
                                  style={{ marginBottom: 5, marginTop: 5 }}
                                  borderRadius={20}

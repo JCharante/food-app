@@ -1,10 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
+import {AppStateStatus, Platform, StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, {useEffect} from "react";
 import { Colors, Typography, Spacings, ThemeManager } from 'react-native-ui-lib';
-
 import { LoginScreen } from "./screens/LoginScreen";
 import { HomeScreen } from "./screens/merchant/HomeScreen";
 import { TokenContext } from './util/tokenContext'
@@ -23,6 +22,10 @@ import { useState } from 'react';
 import { trpc } from './util/api';
 import {registerRootComponent} from "expo";
 import { CreateFoodScreen } from './screens/merchant/CreateFoodScreen';
+import { CreateFoodAddonScreen } from './screens/merchant/CreateFoodAddonScreen';
+import {ViewAllFoodAddonsScreen} from "./screens/merchant/ViewAllFoodAddonsScreen";
+import {CreateFoodAddonCategoryScreen} from "./screens/merchant/menu/addons/CreateFoodAddonCategoryScreen";
+import {EditAddonCategory} from "./screens/merchant/menu/addons/EditAddonCategory";
 
 
 Colors.loadColors({
@@ -96,6 +99,20 @@ export default function App() {
                   <RestaurantContext.Provider value={{ restaurant, setRestaurant }}>
                       <NavigationContainer>
                           <Stack.Navigator initialRouteName="Home">
+                              {/* Addons */}
+                              <Stack.Screen name="ViewAllFoodAddons"
+                                            component={ViewAllFoodAddonsScreen}
+                                            options={{ title: 'All Food Addons' }}/>
+                              <Stack.Screen name="CreateFoodAddon"
+                                            component={CreateFoodAddonScreen}
+                                            options={{ title: 'Create Food Addon' }}/>
+                              {/* Addon Categories */}
+                              <Stack.Screen name="CreateFoodAddonCategory"
+                                            component={CreateFoodAddonCategoryScreen}
+                                            options={{ title: 'Create Food Addon Category' }}/>
+                              <Stack.Screen name="EditAddonCategory"
+                                            component={EditAddonCategory}
+                                            options={{ title: 'Edit Food Addon Category'}}/>
                               <Stack.Screen name="Login"
                                             component={LoginScreen}
                                             options={{ headerShown: false }} />

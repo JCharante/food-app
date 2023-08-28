@@ -39,7 +39,6 @@ export const EditFoodScreen = ({ route }) => {
     if (foodItem === undefined) return <View><Text>An error occured.</Text></View>
 
     useEffect(() => {
-        console.log(foodItem)
         setNames(foodItem.names)
         setDescriptions(foodItem.descriptions)
         setPrice(foodItem.price)
