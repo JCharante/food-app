@@ -85,12 +85,12 @@ export default function HomeIndex() {
     // todo: update current language to use language from context
     const categoryElements = useMemo(() => {
         if (restaurantCategoriesReq.data) {
-            return restaurantCategoriesReq.data.map((categoryInfo) => <View style={tw`flex flex-col w-[56px]`} key={categoryInfo.id}>
+            return restaurantCategoriesReq.data.map((categoryInfo) => <View style={tw`flex flex-col w-[60px]`} key={categoryInfo.id}>
                 <View style={tw`flex flex-row justify-center`}>
                     {getIcon(categoryInfo.iconName)}
                 </View>
                 <View style={tw`flex flex-row`}>
-                    <Text style={tw`text-center w-full text-xs`}>{getName(categoryInfo.names, 'en')}</Text>
+                    <Text style={tw`text-center w-full text-xs font-semibold`}>{getName(categoryInfo.names, 'en')}</Text>
                 </View>
             </View>)
         } else {
