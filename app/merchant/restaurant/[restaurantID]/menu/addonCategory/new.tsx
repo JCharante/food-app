@@ -1,23 +1,30 @@
 import {View, Text, RadioGroup, RadioButton} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import {useState} from "react";
-import {InternalTextField} from "../../../../components/InternalTextField";
-import {CardItem} from "../../../../components/CardItem";
-import {trpc} from "../../../../util/api";
+import {InternalTextField} from "../../../../../../components/InternalTextField";
+import {CardItem} from "../../../../../../components/CardItem";
+import {trpc} from "../../../../../../util/api";
+import {Stack, useRouter, useSearchParams} from "expo-router";
 
+const ViewWrapper = ({ children }) => {
+    return <ScrollView>
+        <Stack.Screen options={{ title: 'New Addon Category' }}/>
+        {children}
+    </ScrollView>
+}
 
-
-export const CreateFoodAddonCategoryScreen = ({ navigation, route }) => {
+export const CreateFoodAddonCategoryScreen = ({ route }) => {
+    const navigation = useRouter()
+    const restaurantID = useSearchParams().restaurantID?.toString() || ''
     const [names, setNames] = useState<{[languageCode: string]: string}>({
         'en': '',
         'vi': ''
     })
 
     const [catType, setCatType] = useState<'pickOne' | 'multipleChoice'>('pickOne')
-    const { restaurantID } = route.params
     const mutation = trpc.createRestaurantFoodAddonCategory.useMutation()
 
-    return <ScrollView >
+    return <ViewWrapper>
         <View padding-15>
             {mutation.isLoading ? <Text>Loading...</Text> : (<>
                 {mutation.isSuccess ? <Text>Success</Text> : null}
@@ -52,5 +59,7 @@ export const CreateFoodAddonCategoryScreen = ({ navigation, route }) => {
             </>)}
 
         </View>
-    </ScrollView>
+    </ViewWrapper>
 }
+
+export default CreateFoodAddonCategoryScreen

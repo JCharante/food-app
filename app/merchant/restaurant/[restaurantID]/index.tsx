@@ -1,19 +1,25 @@
 import {View, Text} from "react-native-ui-lib";
-import {CardItem} from "../../components/CardItem";
-import {getName} from "../../util/utilities";
-import {trpc} from "../../util/api";
+import {CardItem} from "../../../../components/CardItem";
+import {getName} from "../../../../util/utilities";
+import {trpc} from "../../../../util/api";
 import * as ImagePicker from 'expo-image-picker';
 import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
 import {Platform} from "react-native";
+import {useSearchParams, useRouter, Stack} from "expo-router";
 
 
-export const RestaurantScreen = ({ navigation, route  }) => {
-    const restaurantID = route.params.restaurantID
+export const RestaurantScreen = ({ route  }) => {
+    const navigation = useRouter()
+    console.log(useSearchParams())
+    const restaurantID = useSearchParams().restaurantID?.toString() || ''
     const restaurants = trpc.userGetRestaurants.useQuery()
     const postImageMutation = trpc.postRestaurantImage.useMutation()
     const restaurantImageReq = trpc.getRestaurantImage.useQuery({ restaurantID })
 
-    if (!restaurants.data || !restaurantImageReq.data) return <View><Text>Loading...</Text></View>
+    if (!restaurants.data || !restaurantImageReq.data || restaurantID === '') return <View>
+        <Stack.Screen options={{ title: '' }}/>
+        <Text>Loading...</Text>
+    </View>
 
     const data = restaurants.data
 
@@ -75,10 +81,13 @@ export const RestaurantScreen = ({ navigation, route  }) => {
 
 
     return <View padding-10>
+        <Stack.Screen options={{ title: getName(shop.names) }}/>
         <Text>Restaurant Name: {getName(shop.names, 'en')}</Text>
         <Text>Address: {shop.address}</Text>
 
-        <CardItem onPress={() => { navigation.navigate('UpdateMenu', { restaurantID }) }} label="Edit Menu"/>
+        <CardItem onPress={() => { navigation.push(`/merchant/restaurant/${restaurantID}/menu/update`) }} label="Edit Menu"/>
         <CardItem onPress={newPictureFlow} label="Upload new picture"/>
     </View>
 }
+
+export default RestaurantScreen

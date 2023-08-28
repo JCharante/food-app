@@ -1,27 +1,31 @@
 import {View, Text, Card} from "react-native-ui-lib";
-import {RestaurantContext} from "../../../../util/restaurantContext";
-import {useContext, useEffect, useState} from "react";
-import {TokenContext} from "../../../../util/tokenContext";
-import { faSquarePlus } from '@fortawesome/free-regular-svg-icons'
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {CardItem} from "../../../../components/CardItem";
+import {Stack, useRouter, useSearchParams} from "expo-router";
+import {trpc} from "../../../../../../../util/api";
 import {ScrollView} from "react-native-gesture-handler";
-import {getName} from "../../../../util/utilities";
-import {trpc} from "../../../../util/api";
+import {getName} from "../../../../../../../util/utilities";
+import {CardItem} from "../../../../../../../components/CardItem";
 
-export const UpdateCategoryScreen = ({ navigation, route }) => {
-    const { categoryID, restaurantID } = route.params
+export const UpdateCategoryScreen = ({ route }) => {
+    const navigation = useRouter()
+    const restaurantID = useSearchParams().restaurantID?.toString() || ''
+    const categoryID = useSearchParams().categoryID?.toString() || ''
 
     const categoriesReq = trpc.getRestaurantCategories.useQuery({ restaurantID })
     const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
     const mutatateMenuCategory = trpc.patchMenuCategory.useMutation()
     const deleteCategory = trpc.deleteMenuCategory.useMutation()
 
-    if (!categoriesReq.data || !foodItems.data) return <View><Text>Loading...</Text></View>
+    if (!categoriesReq.data || !foodItems.data) return <View>
+        <Stack.Screen options={{ title: 'Update Category...' }}/>
+        <Text>Loading...</Text>
+    </View>
 
     const category = categoriesReq.data.find((c) => c._id === categoryID)
 
-    if (category === undefined) return <View><Text>An error occurred when loading category information</Text></View>
+    if (category === undefined) return <View>
+        <Stack.Screen options={{ title: 'Update Category...' }}/>
+        <Text>An error occurred when loading category information</Text>
+    </View>
 
 
     const removeItem = async (itemID: string) => {
@@ -44,10 +48,11 @@ export const UpdateCategoryScreen = ({ navigation, route }) => {
 
     const deleteCategoryHandler = async () => {
         await deleteCategory.mutateAsync({ restaurantID, categoryID })
-        navigation.goBack()
+        navigation.back()
     }
 
     const renderContent = () => <ScrollView>
+        <Stack.Screen options={{ title: `Update ${getName(category.names)}` }}/>
         <View padding-15>
             <Text>Category name: {getName(category.names, 'en')}</Text>
             <Text>Food Items:</Text>
@@ -92,3 +97,5 @@ export const UpdateCategoryScreen = ({ navigation, route }) => {
 
     return category === null ? <Text>Loading...</Text> : renderContent();
 }
+
+export default UpdateCategoryScreen

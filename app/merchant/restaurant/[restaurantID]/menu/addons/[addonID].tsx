@@ -1,15 +1,23 @@
 import {View, Text} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import {useEffect, useState} from "react";
-import {CardItem} from "../../../../components/CardItem";
-import {trpc} from "../../../../util/api";
-import {InternalTextField} from "../../../../components/InternalTextField";
+import {CardItem} from "../../../../../../components/CardItem";
+import {trpc} from "../../../../../../util/api";
+import {InternalTextField} from "../../../../../../components/InternalTextField";
 import {Switch} from "react-native";
+import {Stack, useRouter, useSearchParams} from "expo-router";
 
+const ViewWrapper = ({ children }) => {
+    return <ScrollView>
+        <Stack.Screen options={{ title: 'Edit Addon' }}/>
+        {children}
+    </ScrollView>
+}
 
-
-export const EditFoodAddon = ({ navigation, route }) => {
-    const { restaurantID, addonID } = route.params
+export const EditFoodAddon = ({ route }) => {
+    const navigation = useRouter()
+    const restaurantID = useSearchParams().restaurantID?.toString() || ''
+    const addonID = useSearchParams().addonID?.toString() || ''
     const [names, setNames] = useState<{[languageCode: string]: string}>({
         'en': '',
         'vi': ''
@@ -26,12 +34,12 @@ export const EditFoodAddon = ({ navigation, route }) => {
     const mutation = trpc.patchFoodAddon.useMutation()
 
     if (!addonsReq.data) {
-        return <Text>Loading...</Text>
+        return <ViewWrapper><Text>Loading...</Text></ViewWrapper>
     }
 
     const addon = addonsReq.data.find(a => a._id === addonID)
     if (!addon) {
-        return <Text>Cannot find addon</Text>
+        return <ViewWrapper><Text>Cannot find addon</Text></ViewWrapper>
     }
 
     useEffect(() => {
@@ -55,7 +63,7 @@ export const EditFoodAddon = ({ navigation, route }) => {
         await addonsReq.refetch()
     }
 
-    return <ScrollView >
+    return <ViewWrapper>
         <View padding-15>
             <InternalTextField value={names['en']}
                                label='Name in English'
@@ -96,5 +104,7 @@ export const EditFoodAddon = ({ navigation, route }) => {
                       color='action'
                       onPress={save}/>
         </View>
-    </ScrollView>
+    </ViewWrapper>
 }
+
+export default EditFoodAddon

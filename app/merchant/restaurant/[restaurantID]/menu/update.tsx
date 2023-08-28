@@ -1,24 +1,29 @@
 import {View, Text, Card} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
-import { CardItem } from "../../../components/CardItem";
-import {getName} from "../../../util/utilities";
-import {trpc} from "../../../util/api";
-import {inferRouterOutputs} from "@trpc/server";
-import {AppRouter} from "@goodies-tech/api";
-import {useRefetchOnFocus} from "../../../util/hooks";
+import { CardItem } from "../../../../../components/CardItem";
+import {getName} from "../../../../../util/utilities";
+import {trpc} from "../../../../../util/api";
+import {useRefetchOnFocus} from "../../../../../util/hooks";
+import {Stack, useRouter, useSearchParams} from "expo-router";
+import { Modify } from '@goodies-tech/api'
 
-export const UpdateMenuScreen = ({ navigation, route }) => {
-    const restaurantID = route.params.restaurantID
+export const Update = ({ route }) => {
+    const navigation = useRouter()
+    const restaurantID = useSearchParams().restaurantID?.toString() || ''
     const categoriesReq = trpc.getRestaurantCategories.useQuery({ restaurantID })
     useRefetchOnFocus(categoriesReq.refetch)
     const restaurantsReq = trpc.userGetRestaurants.useQuery()
     useRefetchOnFocus(restaurantsReq.refetch)
     const menuMutation = trpc.patchRestaurantMenu.useMutation()
 
-    if (!restaurantsReq.data || !categoriesReq.data) return <View><Text>Loading...</Text></View>
-    // type RouterOutput = inferRouterOutputs<AppRouter>
-    // const categoriesData: RouterOutput['getRestaurantCategories'] = categoriesReq.data
-    const restaurant = restaurantsReq.data.find((r) => r._id === restaurantID)
+    if (!restaurantsReq.data || !categoriesReq.data || restaurantID === '' || !restaurantID) return <View>
+        <Stack.Screen options={{ title: '' }}/>
+        <Text>Loading...</Text>
+    </View>
+    const res = restaurantsReq.data.find((r) => r._id === restaurantID)
+    const restaurant: Modify<typeof res, {
+        menu: any
+    }> = res
     console.log(restaurant.menu)
 
     const categoryIsOnMenu = (categoryID: string) => {
@@ -44,6 +49,7 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
     }
 
     return <ScrollView >
+        <Stack.Screen options={{ title: 'Update Menu' }}/>
         <View padding-15>
             <Text>
                 A restaurant's menu is composed of categories.
@@ -66,10 +72,12 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
             <View marginT-10>
                 <CardItem label="View all Foods"
                           color="action"
-                          onPress={() => navigation.navigate('AllFoods', { restaurantID })} />
+                          onPress={() => navigation.push(`/merchant/restaurant/${restaurantID}/menu/foods/all`)}
+                />
                 <CardItem label="View all Food Addons"
                           color="action"
-                          onPress={() => navigation.navigate('ViewAllFoodAddons', { restaurantID })} />
+                          onPress={() => navigation.push(`/merchant/restaurant/${restaurantID}/menu/addons/all`)}
+                />
                 <Text style={{ fontSize: 20 }}>Menu Categories:</Text>
                 {categoriesReq.data.map((cat) => {
                     return <Card key={cat._id}
@@ -84,10 +92,7 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                         </View>
                         <View flex right>
                             <Text style={{ color: 'green' }}
-                                  onPress={() => navigation.navigate('UpdateCategoryScreen', {
-                                      categoryID: cat._id,
-                                      restaurantID
-                                  })}
+                                  onPress={() => navigation.push(`/merchant/restaurant/${restaurantID}/menu/category/${cat._id}/update`)}
                             >Edit</Text>
                         </View>
                         <View flex right>
@@ -107,9 +112,11 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                 <CardItem
                     label="Create Category"
                     color="action"
-                    onPress={() => navigation.navigate('CreateCategory', { restaurantID })}
+                    onPress={() => navigation.push(`/merchant/restaurant/${restaurantID}/menu/category/new`)}
                 ></CardItem>
             </View>
         </View>
     </ScrollView>
 }
+
+export default Update

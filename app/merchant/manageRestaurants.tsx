@@ -4,16 +4,22 @@ import {RestaurantContext} from "../../util/restaurantContext";
 import {getName} from "../../util/utilities";
 import { trpc } from '../../util/api'
 import {useRefetchOnFocus} from "../../util/hooks";
+import {Stack, useRouter} from "expo-router";
 
-export const ManageRestaurantsScreen = ({ navigation }) => {
+export const ManageRestaurantsScreen = () => {
+    const navigation = useRouter()
     const { setRestaurant } = useContext(RestaurantContext)
 
     const restaurants = trpc.userGetRestaurants.useQuery()
     useRefetchOnFocus(restaurants.refetch)
-    if (!restaurants.data) return <View><Text>Loading...</Text></View>
+    if (!restaurants.data) return <View>
+        <Stack.Screen options={{ title: 'Manage Restaurants' }}/>
+        <Text>Loading...</Text>
+    </View>
 
 
     return <View padding-10>
+        <Stack.Screen options={{ title: 'Manage Restaurants' }}/>
         <Text>Your Restaurants:</Text>
         <View marginT-10>
         {restaurants.data.map((restaurant) => {
@@ -24,9 +30,7 @@ export const ManageRestaurantsScreen = ({ navigation }) => {
                          borderRadius={20}
                          onPress={() => {
                              setRestaurant(restaurant)
-                             navigation.navigate('Restaurant', {
-                                 restaurantID: restaurant._id
-                             })}
+                             navigation.push(`/merchant/restaurant/${restaurant._id}`)}
                          }
             >
                 <Card.Section imageSource={{ url: restaurant.pictureURL }}
@@ -41,3 +45,5 @@ export const ManageRestaurantsScreen = ({ navigation }) => {
         </View>
     </View>
 }
+
+export default ManageRestaurantsScreen

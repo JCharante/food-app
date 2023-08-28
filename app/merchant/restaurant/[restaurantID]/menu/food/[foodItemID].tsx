@@ -2,23 +2,28 @@ import {View, Text, Incubator, Card, Button} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import {KeyboardAvoidingView, Platform} from "react-native";
 import {useContext, useEffect, useState} from "react";
-import {TokenContext} from "../../../../util/tokenContext";
-import {RestaurantContext} from "../../../../util/restaurantContext";
-import {AppRouter } from "@goodies-tech/api";
-import {getName} from "../../../../util/utilities";
-import {trpc} from "../../../../util/api";
-import {inferRouterOutputs} from "@trpc/server";
-import {InternalTextField} from "../../../../components/InternalTextField";
-import {CardItem} from "../../../../components/CardItem";
-import {NameMap} from "../../../../util/types";
 import * as ImagePicker from "expo-image-picker";
 import {manipulateAsync, SaveFormat} from "expo-image-manipulator";
-import {useRefetchOnFocus} from "../../../../util/hooks";
+import {Stack, useRouter, useSearchParams} from "expo-router";
+import {NameMap} from "../../../../../../util/types";
+import {trpc} from "../../../../../../util/api";
+import {useRefetchOnFocus} from "../../../../../../util/hooks";
+import {InternalTextField} from "../../../../../../components/InternalTextField";
+import {CardItem} from "../../../../../../components/CardItem";
+import {getName} from "../../../../../../util/utilities";
 
 const { TextField } = Incubator
 
-export const EditFoodScreen = ({ route }) => {
-    const { foodItemID, restaurantID } = route.params
+const ViewWrapper = ({ children }) => {
+    return <ScrollView>
+        <Stack.Screen options={{ title: 'Edit Food' }}/>
+        {children}
+    </ScrollView>
+}
+export const EditFoodScreen = ({ }) => {
+    const navigation = useRouter()
+    const restaurantID = useSearchParams().restaurantID?.toString() || ''
+    const foodItemID = useSearchParams().foodItemID?.toString() || ''
     const [names, setNames] = useState<NameMap>({
         'en': '',
         'vi': ''
@@ -47,8 +52,8 @@ export const EditFoodScreen = ({ route }) => {
         setPrice(foodItem.price)
     }, [foodItem])
 
-    if (!foodItemsReq.data || !addonCatsReq.data) return <View><Text>Loading...</Text></View>
-    if (foodItem === undefined) return <View><Text>An error occurred.</Text></View>
+    if (!foodItemsReq.data || !addonCatsReq.data) return <ViewWrapper><Text>Loading...</Text></ViewWrapper>
+    if (foodItem === undefined) return <ViewWrapper><Text>An error occurred.</Text></ViewWrapper>
 
 
     const addons = addonCatsReq.data
@@ -129,7 +134,7 @@ export const EditFoodScreen = ({ route }) => {
     };
 
     const content = () => <KeyboardAvoidingView>
-        <ScrollView>
+        <ViewWrapper>
             <View padding-15 flex>
                 <View>
                     <Card
@@ -225,8 +230,10 @@ export const EditFoodScreen = ({ route }) => {
                     </CardItem>
                 </>)}
             </View>
-        </ScrollView>
+        </ViewWrapper>
     </KeyboardAvoidingView>
 
     return foodItem === null ? <Text>Loading...</Text> : content()
 }
+
+export default EditFoodScreen

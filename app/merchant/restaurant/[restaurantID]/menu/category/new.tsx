@@ -1,23 +1,26 @@
 import {View, Text, Incubator} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import {useState} from "react";
-import {CardItem} from "../../../../components/CardItem";
-import {trpc} from "../../../../util/api";
-import {InternalTextField} from "../../../../components/InternalTextField";
+import {CardItem} from "../../../../../../components/CardItem";
+import {trpc} from "../../../../../../util/api";
+import {InternalTextField} from "../../../../../../components/InternalTextField";
+import {Stack, useRouter, useSearchParams} from "expo-router";
 
 const { TextField } = Incubator
 
 
-export const CreateCategoryScreen = ({ navigation, route }) => {
+export const CreateCategoryScreen = ({ route }) => {
+    const navigation = useRouter()
+    const restaurantID = useSearchParams().restaurantID?.toString() || ''
     const [names, setNames] = useState<{[languageCode: string]: string}>({
         'en': '',
         'vi': ''
     })
 
-    const restaurantID: string = route.params.restaurantID
     const mutation = trpc.createRestaurantCategory.useMutation()
 
     return <ScrollView >
+        <Stack.Screen options={{ title: 'New Category' }}/>
         <View padding-15>
             {mutation.isLoading ? <Text>Loading...</Text> : (<>
                 {mutation.isSuccess ? <Text>Success</Text> : null}
@@ -41,3 +44,5 @@ export const CreateCategoryScreen = ({ navigation, route }) => {
         </View>
     </ScrollView>
 }
+
+export default CreateCategoryScreen

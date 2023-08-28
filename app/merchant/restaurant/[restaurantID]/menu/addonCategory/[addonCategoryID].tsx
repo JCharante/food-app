@@ -1,15 +1,23 @@
 import {View, Text, RadioGroup, RadioButton} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import {useEffect, useMemo, useState} from "react";
-import {InternalTextField} from "../../../../components/InternalTextField";
-import {CardItem} from "../../../../components/CardItem";
-import {trpc} from "../../../../util/api";
-import {getName} from "../../../../util/utilities";
+import {InternalTextField} from "../../../../../../components/InternalTextField";
+import {CardItem} from "../../../../../../components/CardItem";
+import {trpc} from "../../../../../../util/api";
+import {getName} from "../../../../../../util/utilities";
+import {Stack, useRouter, useSearchParams} from "expo-router";
 
+const ViewWrapper = ({ children }) => {
+    return <ScrollView>
+        <Stack.Screen options={{ title: 'Edit Addon Category' }}/>
+        {children}
+    </ScrollView>
+}
 
-
-export const EditAddonCategory = ({ navigation, route }) => {
-    const { addonCategoryID, restaurantID } = route.params
+export const Edit = ({ route }) => {
+    const navigation = useRouter()
+    const restaurantID = useSearchParams().restaurantID?.toString() || ''
+    const addonCategoryID = useSearchParams().addonCategoryID?.toString() || ''
     const [names, setNames] = useState<{[languageCode: string]: string}>({
         'en': '',
         'vi': ''
@@ -19,7 +27,7 @@ export const EditAddonCategory = ({ navigation, route }) => {
     const addonCategoriesReq = trpc.getRestaurantAddonCategories.useQuery({ restaurantID })
     const addonsReq = trpc.getRestaurantFoodAddons.useQuery({ restaurantID })
 
-    if (!addonCategoriesReq.data || !addonsReq.data) return <View><Text>Loading...</Text></View>
+    if (!addonCategoriesReq.data || !addonsReq.data) return <ViewWrapper><Text>Loading...</Text></ViewWrapper>
 
     const addonCat = addonCategoriesReq.data.find((f) => f._id === addonCategoryID)
 
@@ -57,7 +65,7 @@ export const EditAddonCategory = ({ navigation, route }) => {
         await addonCategoriesReq.refetch()
     }
 
-    return <ScrollView >
+    return <ViewWrapper>
         <View padding-15>
             <InternalTextField value={names['en']}
                                label='Name in English'
@@ -120,5 +128,7 @@ export const EditAddonCategory = ({ navigation, route }) => {
 
 
         </View>
-    </ScrollView>
+    </ViewWrapper>
 }
+
+export default Edit

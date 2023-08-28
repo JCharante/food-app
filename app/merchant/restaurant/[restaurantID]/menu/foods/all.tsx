@@ -1,17 +1,26 @@
 import {View, Text, Card} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
-import { CardItem } from "../../../../components/CardItem";
-import {getName} from "../../../../util/utilities";
-import {trpc} from "../../../../util/api";
-import {useRefetchOnFocus} from "../../../../util/hooks";
-export const AllFoodsScreen = ({ navigation, route }) => {
-    const restaurantID = route.params.restaurantID
+import { CardItem } from "../../../../../../components/CardItem";
+import {getName} from "../../../../../../util/utilities";
+import {trpc} from "../../../../../../util/api";
+import {useRefetchOnFocus} from "../../../../../../util/hooks";
+import {Stack, useRouter, useSearchParams} from "expo-router";
+
+const ViewWrapper = ({ children }) => {
+    return <ScrollView>
+        <Stack.Screen options={{ title: 'All Foods' }}/>
+        {children}
+    </ScrollView>
+}
+export const AllFoodsScreen = ({ route }) => {
+    const navigation = useRouter()
+    const restaurantID = useSearchParams().restaurantID?.toString() || ''
     const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
     useRefetchOnFocus(foodItems.refetch)
 
-    if (!foodItems.data) return <View><Text>Loading...</Text></View>
+    if (!foodItems.data) return <ViewWrapper><Text>Loading...</Text></ViewWrapper>
 
-    return <ScrollView >
+    return <ViewWrapper>
         <View padding-15>
             <View marginT-10>
                 <Text style={{ fontSize: 20 }}>Food:</Text>
@@ -26,22 +35,18 @@ export const AllFoodsScreen = ({ navigation, route }) => {
                         </View>
                         <View flex
                               right>
-                            <Text onPress={() => navigation.navigate(
-                                'EditFoodScreen',
-                                {
-                                    restaurantID,
-                                    foodItemID: food._id
-                                }
-                            )}>Edit</Text>
+                            <Text onPress={() => navigation.push(`/merchant/restaurant/${restaurantID}/menu/food/${food._id.toString()}`)}>Edit</Text>
                         </View>
                     </CardItem>
                 })}
                 <CardItem
                     label="Create Food"
                     color="action"
-                    onPress={() => navigation.navigate('CreateFood', { restaurantID })}
+                    // onPress={() => navigation.navigate('CreateFood', { restaurantID })}
                 />
             </View>
         </View>
-    </ScrollView>
+    </ViewWrapper>
 }
+
+export default AllFoodsScreen

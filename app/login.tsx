@@ -5,8 +5,10 @@ import {ScrollView, Text } from "react-native";
 import {Button, Colors, TextField, View} from "react-native-ui-lib";
 import {px} from "../util/utilities";
 import {baseURL} from "../util/api";
+import {useRouter} from "expo-router";
 
-export const LoginScreen = ({ navigation }) => {
+export default function LoginScreen () {
+    const navigation = useRouter()
     const [email, setEmail] = useState('email');
     const [password, setPassword] = useState('');
 
@@ -27,7 +29,7 @@ export const LoginScreen = ({ navigation }) => {
         const body = await res.json()
         console.log(body)
         await AsyncStorage.setItem('token', body.sessionKey)
-        navigation.navigate('Home')
+        navigation.push('/home')
     }
 
     let emailField = createRef()
@@ -43,10 +45,10 @@ export const LoginScreen = ({ navigation }) => {
                         justifyContent: 'center',
                         alignItems: 'center',
                         marginTop: 200
-        }}
+                    }}
         >
             <View flex style={{ maxWidth: 400, width: '70%'}}>
-                    <View flex centerH>
+                <View flex centerH>
                     <Text>Login with Email</Text>
                     <TextField placeholder='Email'
                                {...textFieldDefaults}
@@ -61,13 +63,13 @@ export const LoginScreen = ({ navigation }) => {
                                onChangeText={setPassword}
                                style={{ marginTop: px(5) }}
                     />
-                    </View>
-                    <Button label={'Login'}
-                            size={Button.sizes.medium}
-                            backgroundColor={Colors.red30}
-                            style={{ marginTop: px(10) }}
-                            onPress={submit}
-                    />
+                </View>
+                <Button label={'Login'}
+                        size={Button.sizes.medium}
+                        backgroundColor={Colors.red30}
+                        style={{ marginTop: px(10) }}
+                        onPress={submit}
+                />
             </View>
         </ScrollView>
     )

@@ -1,12 +1,14 @@
 import {View, Text} from "react-native-ui-lib";
 import {useContext, useEffect} from "react";
-import {TokenContext} from "../../util/tokenContext";
+import {TokenContext} from "../util/tokenContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Pressable} from "react-native";
-import {CardItem} from "../../components/CardItem";
+import {CardItem} from "../components/CardItem";
+import {Stack, useRouter} from "expo-router";
 
-export const HomeScreen = ({ navigation }) => {
+export const Index = () => {
     const { token, setToken } = useContext(TokenContext)
+    const navigation = useRouter();
 
     useEffect(() => {
         // Check if logged in
@@ -14,7 +16,7 @@ export const HomeScreen = ({ navigation }) => {
             const value = await AsyncStorage.getItem('token')
             setToken(value)
             if(value === null) {
-                navigation.navigate('Login')
+                navigation.push('/login')
             } else {
                 setToken(value)
             }
@@ -24,8 +26,12 @@ export const HomeScreen = ({ navigation }) => {
     }, [])
 
     return token !== '' ? (<View padding-15>
-        <CardItem label="Home Screen" />
-        <CardItem onPress={() => {navigation.navigate('ManageRestaurants')}}
+        <Stack.Screen options={{ title: 'Merchant Home' }}/>
+        <CardItem label="Merchant Home Screen" color="info" />
+        <CardItem onPress={() => {navigation.push('/merchant/manageRestaurants')}}
+                  color="action"
                   label="Manage Restaurants" />
     </View>) : null
 }
+
+export default Index
