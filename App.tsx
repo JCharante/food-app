@@ -16,6 +16,7 @@ import {RestaurantContext} from "./util/restaurantContext";
 import { EditFoodScreen } from './screens/merchant/EditFoodScreen';
 // import { PickCategoriesScreen } from './screens/merchant/PickCategoriesScreen';
 import { CreateCategoryScreen } from "./screens/merchant/CreateCategoryScreen";
+import { AllFoodsScreen } from "./screens/merchant/AllFoodsScreen";
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
@@ -111,6 +112,9 @@ export default function App() {
                               <Stack.Screen name="UpdateMenu"
                                             component={UpdateMenuScreen}
                                             options={{ title: 'Update Menu' }}/>
+                              <Stack.Screen name="AllFoods"
+                                            component={AllFoodsScreen}
+                                            options={{ title: 'All Foods' }}/>
                               <Stack.Screen name="CreateCategory"
                                             component={CreateCategoryScreen}
                                             options={{ title: 'CreateCategory' }}/>

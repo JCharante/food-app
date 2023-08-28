@@ -35,7 +35,10 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                 The order of the categories shown is also the order they will appear on the menu
             </Text>
             <View marginT-10>
-                <Text style={{ fontSize: 20 }}>Categories:</Text>
+                <CardItem label="View all Foods"
+                          color="action"
+                          onPress={() => navigation.navigate('AllFoods', { restaurantID })} />
+                <Text style={{ fontSize: 20 }}>Menu Categories:</Text>
                 {categories.data.map((cat) => {
                     return <Card key={cat._id}
                                  style={{ marginBottom: 5, marginTop: 5 }}
@@ -65,30 +68,6 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                     color="action"
                     onPress={() => navigation.navigate('CreateCategory', { restaurantID })}
                 ></CardItem>
-                <Text style={{ fontSize: 20 }}>Food:</Text>
-                <Text>Food will only show the menu if it is added to a category.</Text>
-                {foodItems.data.map((food) => {
-                    return <CardItem key={food._id}>
-                        <View padding-15 flex>
-                            <Text>{getName(food.names, 'en')}</Text>
-                        </View>
-                        <View flex
-                              right>
-                            <Text onPress={() => navigation.navigate(
-                                'EditFoodScreen',
-                                {
-                                    restaurantID,
-                                    foodItemID: food._id
-                                }
-                            )}>Edit</Text>
-                        </View>
-                    </CardItem>
-                })}
-                <CardItem
-                    label="Create Food"
-                    color="action"
-                    onPress={() => navigation.navigate('CreateFood', { restaurantID })}
-                />
             </View>
         </View>
     </ScrollView>
