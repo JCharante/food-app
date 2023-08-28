@@ -22,9 +22,10 @@ import IconVietnam from "../../../assets/custom-icons/food/vietnam.svg"
 import IconWestern from "../../../assets/custom-icons/food/western.svg"
 import GoodiesSquareLogo from "../../../assets/goodies-square-logo.svg"
 import {trpc} from "../../../util/api";
-import {useMemo} from "react";
+import {useMemo, useState} from "react";
 import {getName, tw} from "../../../util/utilities";
 import {useIntl} from "react-intl";
+import {GoodiesSearchInput} from "../../../components/GoodiesSearchInput";
 
 type IconNames = 'nearby' | 'brunch' | 'burger' | 'chinese' | 'coffee' | 'dessert' | 'health' | 'indian' | 'italian' | 'japanese' | 'juice' | 'korean' | 'pizza' | 'thai' | 'vietnam' | 'western'
 
@@ -82,6 +83,7 @@ export default function HomeIndex() {
     const restaurantCategoriesReq = trpc.search.getRestaurantCategories.useQuery({})
     const t = useIntl()
     const nameReq = trpc.user.userInfo.useQuery()
+    const [searchText, setSearchText] = useState<string>('')
 
     // todo: update current language to use language from context
     const categoryElements = useMemo(() => {
@@ -105,11 +107,18 @@ export default function HomeIndex() {
                 <Stack.Screen options={{ title: 'Goodies.vn', headerBackVisible: false, headerShown: false }}/>
                 <View style={tw`flex flex-row`}>
                     <View style={tw`flex flex-col`}>
-                        <Text style={tw`font-semibold text-neutral-800`}>Good morning {nameReq.data ? nameReq.data : ''}</Text>
+                        <Text style={tw`font-semibold text-neutral-800`}>Good morning, {nameReq.data ? nameReq.data : ''}</Text>
                         <Text style={tw`text-xs text-neutral-700`}>19 Cao Ba Quat, Ba Dinh, Ha Noi</Text>
                     </View>
                     <View style={tw`flex flex-1`}></View>
                     <GoodiesSquareLogo/>
+                </View>
+                <View style={tw`flex flex-row mt-4 mb-[20px]`}>
+                    <GoodiesSearchInput
+                        value={searchText}
+                        setValue={setSearchText}
+                        placeholder={'Search'}
+                    />
                 </View>
                 <Text style={tw`font-semibold text-lg text-neutral-900 mb-3`}>{t.formatMessage({ id: 'root.home.category' })}</Text>
                 <View style={tw`flex flex-row flex-wrap gap-3 justify-center`}>
