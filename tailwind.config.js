@@ -10,8 +10,12 @@ module.exports = {
                     600: '#2AC3EC',
                     800: '#08272F'
                 },
+                'bad': {
+                    600: '#EA3942'
+                },
                 'secondary': '#FF67E7',
-                'tertiary': '#FF67E7'
+                'tertiary': '#FF67E7',
+                'background': '#F9F9F9',
             }
         }
     }

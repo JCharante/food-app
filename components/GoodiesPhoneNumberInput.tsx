@@ -9,8 +9,9 @@ import {Entypo} from "@expo/vector-icons";
 export interface GoodiesPhoneNumberInput {
     countryCode: string // e.g. US | VN
     setCountryCode: (text: string) => void
-    setFullPhoneNumber: (text: string) => void
     setIsValidPhoneNumber: (value: boolean) => void
+    setPhoneNumberCountryCode: (text: string) => void
+    setPhoneNumberRest: (text: string) => void
 }
 
 
@@ -42,7 +43,8 @@ export function GoodiesPhoneNumberInput(props: GoodiesPhoneNumberInput) {
         const newValue = value.replace(/[^0-9]/g, '')
         // if value length is between 8 and 14, set value to true, and always update full phone number
         props.setIsValidPhoneNumber(newValue.length >= 8 && newValue.length <= 14)
-        props.setFullPhoneNumber(`+${countryData.countryCallingCode}${newValue}`)
+        props.setPhoneNumberCountryCode(countryData.countryCallingCode)
+        props.setPhoneNumberRest(newValue)
     }, [value])
 
 

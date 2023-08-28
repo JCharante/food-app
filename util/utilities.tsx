@@ -34,6 +34,16 @@ export const getNumber = (input: string | string[]): number => {
     }
 }
 
+export const getString = (input: string | string[]): string => {
+    if (typeof input === 'string') {
+        return input
+    } else if (Array.isArray(input)) {
+        return getString(input[0])
+    } else {
+        throw new Error('getString got invalid input')
+    }
+}
+
 export const useParamFetcher = () => {
     const searchParams = useSearchParams()
     return {
@@ -52,8 +62,14 @@ export const useParamFetcher = () => {
         get addonCategoryID () {
             return getNumber(searchParams.addonCategoryID?.toString() || '0')
         },
-        get phoneNumber () {
-            return searchParams.phoneNumber || '0'
+        get requestId () {
+            return getString(searchParams.requestId || '0')
+        },
+        get pncc () {
+            return getString(searchParams.pncc || '0')
+        },
+        get pnr () {
+            return getString(searchParams.pnr || '0')
         }
     }
 }

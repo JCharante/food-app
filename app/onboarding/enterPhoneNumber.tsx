@@ -8,6 +8,7 @@ import {GoodiesPhoneNumberInput} from "../../components/GoodiesPhoneNumberInput"
 import {GoodiesButton} from "../../components/GoodiesButton";
 import {HeaderBackButtonProps} from "@react-navigation/native-stack/src/types";
 import {MaterialIcons} from "@expo/vector-icons";
+import {trpc} from "../../util/api";
 
 
 interface GoodiesTextInputProps {
@@ -41,12 +42,16 @@ export function GoodiesTextInput({ clearButtonMode = 'while-editing',
 export default function EnterPhoneMumber() {
     const t = useIntl()
     const navigation = useRouter();
+    const authSMSMutation = trpc.user.authSMS.useMutation()
 
-    const [phoneNumber, setPhoneNumber] = useState<string>("")
+    const [phoneNumberCountryCode, setPhoneNumberCountryCode] = useState<string>("84")
+    const [phoneNumberRest, setPhoneNumberRest] = useState<string>("")
     const [validPhoneNumber, setValidPhoneNumber] = useState<boolean>(false)
     const [countryCode, setCountryCode] = useState<string>("VN")
 
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
@@ -68,6 +73,20 @@ export default function EnterPhoneMumber() {
         };
     }, []);
 
+    const submit = async () => {
+        setIsSubmitting(true)
+        try {
+            const req = await authSMSMutation.mutateAsync({
+                phoneNumber: phoneNumberCountryCode + phoneNumberRest
+            })
+            navigation.push(`/onboarding/sms-otp?${`pncc=${phoneNumberCountryCode}&pnr=${phoneNumberRest}&requestId=${req.requestId}`}`)
+            setIsSubmitting(false)
+        } catch (error) {
+            console.log(error)
+            // TODO: handle errors
+        }
+    }
+
 
     return (<SafeAreaView style={tw`bg-white flex w-full h-full`}>
         <Stack.Screen options={{
@@ -84,7 +103,8 @@ export default function EnterPhoneMumber() {
                     <GoodiesPhoneNumberInput countryCode={countryCode}
                                              setCountryCode={setCountryCode}
                                              setIsValidPhoneNumber={setValidPhoneNumber}
-                                             setFullPhoneNumber={setPhoneNumber}
+                                             setPhoneNumberCountryCode={setPhoneNumberCountryCode}
+                                             setPhoneNumberRest={setPhoneNumberRest}
                     />
                 </View>
             </View>
@@ -92,8 +112,9 @@ export default function EnterPhoneMumber() {
             <View style={tw`flex flex-row w-full justify-center items-center mb-8`}>
                 <GoodiesButton title={t.formatMessage({ id: 'languageSelector.next' })}
                                isPrimary={true}
-                               onPress={() => navigation.push(`/onboarding/sms-otp?phoneNumber=${encodeURIComponent(phoneNumber)}`)}
+                               onPress={submit}
                                active={validPhoneNumber}
+                               isLoading={isSubmitting}
                                size="xl"/>
             </View>
             {/*Quick hack to reduce the space the other flex-1 has so the next button appears above the keyboard view*/}

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import {trpc} from "../util/api";
+import {baseURL, trpc} from "../util/api";
 import {httpBatchLink} from "@trpc/client";
 import {TokenContext} from "../util/tokenContext";
 import {RestaurantContext} from "../util/restaurantContext";
@@ -23,9 +23,14 @@ export default function App() {
             transformer: undefined,
             links: [
                 httpBatchLink({
-                    url: 'http://localhost:3000/trpc',
+                    url: baseURL + '/trpc',
+                    headers: () => {
+                        return {
+                            'ngrok-skip-browser-warning': 'any'
+                        }
+                    }
                 }),
-            ]
+            ],
         }),
     );
 
@@ -63,10 +68,11 @@ export default function App() {
                 transformer: undefined,
                 links: [
                     httpBatchLink({
-                        url: 'http://localhost:3000/trpc',
+                        url: baseURL + '/trpc',
                         // optional
                         headers() {
                             return {
+                                'ngrok-skip-browser-warning': 'any',
                                 authorization: `Bearer ${token}`,
                             };
                         },

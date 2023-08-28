@@ -1,5 +1,9 @@
 {
   "languageSelector.next": "Next",
   "login.title": "Login / Sign up",
-  "sms-otp.text": "Enter the 6-digit code sent to {phoneNumber} by SMS"
+  "sms-otp.text-1": "Enter the 6-digit code sent to",
+  "sms-otp.text-2": "<b>{phoneNumber}</b> by SMS",
+  "sign-up.title": "Sign Up",
+  "sign-up.getName": "Your name in Goodies",
+  "sign-up.getNameHelper": "You can change this name later"
 }

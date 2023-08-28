@@ -17,7 +17,8 @@ export const Index = () => {
             setToken(value)
             if(value === null) {
                 // Must be first launch
-                // TODO: redirec twithout allowing back button
+                // TODO: redirect without allowing back button
+                // navigation.push('/onboarding/sms-otp?pncc=84&pnr=0904654902&requestId=123')
                 navigation.push('/onboarding/languageSelect')
             } else {
                 // TODO: check if token is valid / expired
