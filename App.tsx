@@ -6,14 +6,15 @@ import React from "react";
 import { Colors, Typography, Spacings, ThemeManager } from 'react-native-ui-lib';
 
 import { LoginScreen } from "./screens/LoginScreen";
-import { HomeScreen } from "./screens/HomeScreen";
+import { HomeScreen } from "./screens/merchant/HomeScreen";
 import { TokenContext } from './util/tokenContext'
-import { ManageRestaurantsScreen } from './screens/ManageRestaurantsScreen';
-import { RestaurantScreen } from './screens/RestaurantScreen';
-import { UpdateMenuScreen } from './screens/UpdateMenuScreen';
-import {UpdateCategoryScreen} from "./screens/UpdateCategoryScreen";
+import { ManageRestaurantsScreen } from './screens/merchant/ManageRestaurantsScreen';
+import { RestaurantScreen } from './screens/merchant/RestaurantScreen';
+import { UpdateMenuScreen } from './screens/merchant/UpdateMenuScreen';
+import {UpdateCategoryScreen} from "./screens/merchant/UpdateCategoryScreen";
 import {RestaurantContext} from "./util/restaurantContext";
-import { EditFoodScreen } from './screens/EditFoodScreen';
+import { EditFoodScreen } from './screens/merchant/EditFoodScreen';
+import { PickCategoriesScreen } from './screens/merchant/PickCategoriesScreen';
 
 
 
@@ -76,6 +77,9 @@ export default function App() {
                       <Stack.Screen name="EditFoodScreen"
                                     component={EditFoodScreen}
                                     options={{ title: 'Update Food' }}/>
+                      <Stack.Screen name="PickCategories"
+                                    component={PickCategoriesScreen}
+                                    options={{ title: 'Pick Categories' }}/>
                   </Stack.Navigator>
               </NavigationContainer>
           </RestaurantContext.Provider>

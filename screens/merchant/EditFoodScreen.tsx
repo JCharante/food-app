@@ -2,8 +2,8 @@ import {View, Text, Incubator} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import {KeyboardAvoidingView} from "react-native";
 import {useContext, useEffect, useState} from "react";
-import {TokenContext} from "../util/tokenContext";
-import {RestaurantContext} from "../util/restaurantContext";
+import {TokenContext} from "../../util/tokenContext";
+import {RestaurantContext} from "../../util/restaurantContext";
 import {getRestaurantFoodItems, IFoodItemAPI} from "@goodies-tech/api";
 
 const { TextField } = Incubator

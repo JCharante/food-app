@@ -1,9 +1,9 @@
 import {View, Text} from "react-native-ui-lib";
 import {useContext, useEffect} from "react";
-import {TokenContext} from "../util/tokenContext";
+import {TokenContext} from "../../util/tokenContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Pressable} from "react-native";
-import {CardItem} from "../components/CardItem";
+import {CardItem} from "../../components/CardItem";
 
 export const HomeScreen = ({ navigation }) => {
     const { token, setToken } = useContext(TokenContext)

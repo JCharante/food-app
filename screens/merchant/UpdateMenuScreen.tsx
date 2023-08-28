@@ -1,10 +1,11 @@
 import {View, Text, Card} from "react-native-ui-lib";
 import {useContext, useEffect, useState} from "react";
-import {TokenContext} from "../util/tokenContext";
+import {TokenContext} from "../../util/tokenContext";
 import {getMenuCategories, IMenuCategoryAPI, getRestaurantFoodItems, IFoodItemAPI} from '@goodies-tech/api'
 import {ScrollView} from "react-native-gesture-handler";
-import {RestaurantContext} from "../util/restaurantContext";
-import { CardItem } from "../components/CardItem";
+import {RestaurantContext} from "../../util/restaurantContext";
+import { CardItem } from "../../components/CardItem";
+import {getName} from "../../util/utilities";
 
 export const UpdateMenuScreen = ({ navigation, route }) => {
     const { token } = useContext(TokenContext)
@@ -61,15 +62,19 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                                  )}
                     >
                         <View padding-15 flex>
-                            <Text>{cat.name}</Text>
+                            <Text>{getName(cat.names, 'en')}</Text>
                         </View>
                     </Card>
                 })}
+                <CardItem
+                    label="Pick Categories"
+                    onPress={() => navigation.navigate('PickCategories')}
+                ></CardItem>
                 <Text style={{ fontSize: 20 }}>Food:</Text>
                 {foodItems.map((food) => {
                     return <CardItem key={food._id}>
                         <View padding-15 flex>
-                            <Text>{food.name}</Text>
+                            <Text>{getName(food.names, 'en')}</Text>
                         </View>
                         <View flex
                               right>

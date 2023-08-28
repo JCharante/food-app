@@ -1,12 +1,13 @@
 import {View, Text, Card} from "react-native-ui-lib";
-import {RestaurantContext} from "../util/restaurantContext";
+import {RestaurantContext} from "../../util/restaurantContext";
 import {useContext, useEffect, useState} from "react";
 import {getMenuCategories, getRestaurantFoodItems, IFoodItemAPI, IMenuCategoryAPI, PatchMenuCategoryFoodItems} from '@goodies-tech/api'
-import {TokenContext} from "../util/tokenContext";
+import {TokenContext} from "../../util/tokenContext";
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons'
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {CardItem} from "../components/CardItem";
+import {CardItem} from "../../components/CardItem";
 import {ScrollView} from "react-native-gesture-handler";
+import {getName} from "../../util/utilities";
 
 export const UpdateCategoryScreen = ({ route }) => {
     const { token } = useContext(TokenContext)
@@ -45,7 +46,7 @@ export const UpdateCategoryScreen = ({ route }) => {
 
     const renderContent = () => <ScrollView>
         <View padding-15>
-            <Text>Category name: {category.name}</Text>
+            <Text>Category name: {getName(category.names, 'en')}</Text>
             <Text>Food Items:</Text>
             <View>
                 {category.foodItems.map((food) =>
@@ -57,7 +58,7 @@ export const UpdateCategoryScreen = ({ route }) => {
                           centerV
                     >
                         <View padding-15>
-                            <Text>{food.name}</Text>
+                            <Text>{getName(food.names)}</Text>
                         </View>
                         <View flex right>
                             <Text style={{ color: 'red' }}
@@ -70,7 +71,7 @@ export const UpdateCategoryScreen = ({ route }) => {
                 {foodItems.filter((f) => !category.foodItems.map((f) => f._id).includes(f._id))
                           .map((food) => <CardItem key={food._id}>
                               <View padding-15>
-                                  <Text>{food.name}</Text>
+                                  <Text>{getName(food.names)}</Text>
                               </View>
                               <View flex right>
                                   <Text style={{ color: 'green' }}

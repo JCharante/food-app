@@ -2,7 +2,7 @@ import React from 'react'
 
 export interface IRestaurantInContext {
     _id: string,
-    name: string,
+    names: { [languageCode: string]: string },
     address: string
 }
 

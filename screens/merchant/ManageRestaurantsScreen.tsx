@@ -1,9 +1,10 @@
 import {Card, View, Text} from "react-native-ui-lib";
 import {useContext, useEffect, useState} from "react";
 import { getUserRestaurants } from '@goodies-tech/api'
-import {TokenContext} from "../util/tokenContext";
-import {RestaurantContext} from "../util/restaurantContext";
+import {TokenContext} from "../../util/tokenContext";
+import {RestaurantContext} from "../../util/restaurantContext";
 import {IRestaurantV1} from "@goodies-tech/api";
+import {getName} from "../../util/utilities";
 
 export const ManageRestaurantsScreen = ({ navigation }) => {
     const { token } = useContext(TokenContext)
@@ -37,7 +38,7 @@ export const ManageRestaurantsScreen = ({ navigation }) => {
                 <Card.Section imageSource={{ url: 'https://placekitten.com/250/250'}}
                               imageStyle={{width: 96, height: 96}} />
                 <View padding-15 flex>
-                    <Text text70 $textDefault>{restaurant.name}</Text>
+                    <Text text70 $textDefault>{getName(restaurant.names, 'en')}</Text>
                     <Text></Text>
                     <Text>108 Reviews (4.3)</Text>
                 </View>
