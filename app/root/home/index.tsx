@@ -22,12 +22,15 @@ import IconVietnam from "../../../assets/custom-icons/food/vietnam.svg"
 import IconWestern from "../../../assets/custom-icons/food/western.svg"
 import GoodiesSquareLogo from "../../../assets/goodies-square-logo.svg"
 import {trpc} from "../../../util/api";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {getName, tw} from "../../../util/utilities";
 import {useIntl} from "react-intl";
 import {GoodiesSearchInput} from "../../../components/GoodiesSearchInput";
 
 type IconNames = 'nearby' | 'brunch' | 'burger' | 'chinese' | 'coffee' | 'dessert' | 'health' | 'indian' | 'italian' | 'japanese' | 'juice' | 'korean' | 'pizza' | 'thai' | 'vietnam' | 'western'
+
+import * as Location from 'expo-location';
+
 
 const getIcon = (name: string) => {
     switch (name) {
@@ -84,6 +87,13 @@ export default function HomeIndex() {
     const t = useIntl()
     const nameReq = trpc.user.userInfo.useQuery()
     const [searchText, setSearchText] = useState<string>('')
+
+    useEffect(() => {
+        (async () => {
+            const req = await Location.getCurrentPositionAsync()
+            console.log(req)
+        })()
+    }, [])
 
     // todo: update current language to use language from context
     const categoryElements = useMemo(() => {
