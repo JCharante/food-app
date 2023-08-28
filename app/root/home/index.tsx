@@ -22,6 +22,8 @@ import IconThai from "../../../assets/custom-icons/food/thai.svg"
 import IconVietnam from "../../../assets/custom-icons/food/vietnam.svg"
 import IconWestern from "../../../assets/custom-icons/food/western.svg"
 import {trpc} from "../../../util/api";
+import {useMemo} from "react";
+import {getName, tw} from "../../../util/utilities";
 
 type IconNames = 'nearby' | 'brunch' | 'burger' | 'chinese' | 'coffee' | 'dessert' | 'health' | 'indian' | 'italian' | 'japanese' | 'juice' | 'korean' | 'pizza' | 'thai' | 'vietnam' | 'western'
 
@@ -80,12 +82,28 @@ export default function HomeIndex() {
     const navigation = useRouter()
     const restaurantCategoriesReq = trpc.search.getRestaurantCategories.useQuery({})
 
+    // todo: update current language to use language from context
+    const categoryElements = useMemo(() => {
+        if (restaurantCategoriesReq.data) {
+            return restaurantCategoriesReq.data.map((categoryInfo) => <View style={tw`flex flex-col w-[48px]`} key={categoryInfo.id}>
+                <View style={tw`flex flex-row`}>
+                    {getIcon(categoryInfo.iconName)}
+                </View>
+                <View style={tw`flex flex-row`}>
+                    <Text>{getName(categoryInfo.names, 'en')}</Text>
+                </View>
+            </View>)
+        } else {
+            return <Text>Loading...</Text>
+        }
+    }, [restaurantCategoriesReq.data])
+
     return (
         <SafeAreaView>
             <ScrollView>
                 <Stack.Screen options={{ title: 'Goodies.vn', headerBackVisible: false, headerShown: false }}/>
-                <View>
-                    {restaurantCategoriesReq.data ? (<IconNearby/>) : (<Text>Loading</Text>)}
+                <View style={tw`flex flex-row flex-wrap `}>
+                    {categoryElements}
                 </View>
             </ScrollView>
         </SafeAreaView>
