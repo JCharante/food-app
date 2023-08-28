@@ -3,8 +3,9 @@ import {ScrollView} from "react-native-gesture-handler";
 import { CardItem } from "../../../../../../components/CardItem";
 import {getName, getNumber, useParamFetcher} from "../../../../../../util/utilities";
 import {trpc} from "../../../../../../util/api";
-import {useRefetchOnFocus} from "../../../../../../util/hooks";
-import {Stack, useRouter, useSearchParams} from "expo-router";
+import {RefetchContext } from "../../../../../../util/hooks";
+import {Stack, usePathname, useRouter } from "expo-router";
+import React, {useEffect} from "react";
 
 const ViewWrapper = ({ children }) => {
     return <ScrollView>
@@ -12,11 +13,23 @@ const ViewWrapper = ({ children }) => {
         {children}
     </ScrollView>
 }
-export const AllFoodsScreen = ({ route }) => {
+export const AllFoodsScreen = () => {
+    const { url, hasRefetched, setHasRefetched } = React.useContext(RefetchContext)
+    const pathname = usePathname();
     const navigation = useRouter()
     const { restaurantID } = useParamFetcher()
-    const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID })
-    useRefetchOnFocus(foodItems.refetch)
+    const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID }, {
+        staleTime: 5 * 1000 // Unit: ms
+    })
+
+    useEffect(() => {
+        if (pathname === url) {
+            if (!hasRefetched && foodItems.isFetched) {
+                setHasRefetched(true)
+                foodItems.refetch().then(() => {})
+            }
+        }
+    }, [url, hasRefetched])
 
     if (!foodItems.data) return <ViewWrapper><Text>Loading...</Text></ViewWrapper>
 

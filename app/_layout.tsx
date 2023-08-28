@@ -8,10 +8,12 @@ import {registerRootComponent} from "expo";
 import {StyleSheet} from "react-native";
 
 
-import { Stack } from "expo-router"
+import { Stack, usePathname } from "expo-router"
+import {IRefetchContext, RefetchContext} from "../util/hooks";
 
 
 export default function App() {
+    const pathname = usePathname();
     const [token, setToken] = React.useState('')
     const [restaurant, setRestaurant] = React.useState(null)
     const [queryClient] = useState(() => new QueryClient());
@@ -25,6 +27,24 @@ export default function App() {
             ]
         }),
     );
+
+    const [refetchDetails, setRefetchDetails] = useState<IRefetchContext>({
+        url: pathname,
+        hasRefetched: false,
+        setHasRefetched: (hasRefetched: boolean) => setRefetchDetails(state => ({
+            url: state.url,
+            hasRefetched,
+            setHasRefetched: state.setHasRefetched
+        })),
+    })
+
+    useEffect(() => {
+        setRefetchDetails(state => ({
+            url: pathname,
+            hasRefetched: false,
+            setHasRefetched: state.setHasRefetched
+        }))
+    }, [pathname])
 
     useEffect(() => {
         setTrpcClient(() =>
@@ -51,7 +71,9 @@ export default function App() {
             <QueryClientProvider client={queryClient}>
                 <TokenContext.Provider value={{ token, setToken }}>
                     <RestaurantContext.Provider value={{ restaurant, setRestaurant }}>
-                        <Stack />
+                        <RefetchContext.Provider value={refetchDetails}>
+                            <Stack />
+                        </RefetchContext.Provider>
                     </RestaurantContext.Provider>
                 </TokenContext.Provider>
             </QueryClientProvider>
