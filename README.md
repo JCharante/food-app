@@ -1,5 +1,11 @@
-# goodies/app-merchant
+# food-app
 
+## Context
+
+I was previously working on building a food-delivery app targeting a specific niche, but with my business partner decided to stop. I still enjoy working in this tech stack, so I plan to continue developing
+this app for recreational purposes and now am able to make the source code publicly available.
+
+Companion repo: https://github.com/JCharante/food-api
 
 # Dev Setup
 
