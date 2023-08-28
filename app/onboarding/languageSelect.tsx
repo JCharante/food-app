@@ -9,37 +9,9 @@ import {FC, ReactElement, ReactNode, useContext} from "react";
 import {useIntl} from "react-intl";
 import VnFlag from "../../assets/flag-icons/vn.svg"
 import GbEngFlag from "../../assets/flag-icons/gb-eng.svg"
+import {GoodiesButton} from "../../components/GoodiesButton";
 
-interface GoodiesButtonProps {
-    title: string
-    size: 'sm' | 'md' | 'lg' | 'xl'
-    isPrimary: boolean
-    onPress: () => void
-    leftSvg?: ReactElement
-    fontBold?: boolean
-}
 
-export function GoodiesButton({ fontBold = true, ...props }: GoodiesButtonProps) {
-    return <Pressable onPress={props.onPress} style={tw.style(
-        `rounded-[22] m-2`,
-        props.isPrimary ? `bg-primary` : `bg-opacity-0 border border-primary`,
-        props.size === 'xl' && `basis-1/2 pt-[12] pb-[12] pl-[32] pr-[32]`,
-        props.size === 'lg' && `basis-1/2 p-4`,
-        props.size === 'md' && `basis-1/2 p-2`,
-        props.size === 'sm' && `basis-1/4 p-2`)}>
-            <>
-                <View style={tw`flex flex-row w-full items-center justify-center`}>
-                    {props.leftSvg}
-                    <Text style={tw.style(`text-center`,
-                        fontBold ? `font-bold` : null,
-                        props.isPrimary ? `text-white` : `text-primary`,
-                        props.leftSvg !== undefined && `ml-2`
-                    )}>{props.title}</Text>
-                </View>
-            </>
-        </Pressable>
-
-}
 
 export default function LanguageSelect() {
     const t = useIntl()
