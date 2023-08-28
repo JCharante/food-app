@@ -7,7 +7,6 @@ export default function Index() {
 
     return (<View padding-15>
         <Stack.Screen options={{ title: 'Merchant Home' }}/>
-        <CardItem label="Merchant Home Screen" color="info" />
         <CardItem onPress={() => {navigation.push('/merchant/manageRestaurants')}}
                   color="action"
                   label="Manage Restaurants" />

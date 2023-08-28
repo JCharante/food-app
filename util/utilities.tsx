@@ -2,6 +2,7 @@ import {PixelRatio} from "react-native";
 import * as PrismaClient from "@prisma/client"
 import {useSearchParams} from "expo-router";
 import {NameMap} from "./types";
+import { create } from 'twrnc'
 
 export const px = (units: number) => units * PixelRatio.get();
 
@@ -75,3 +76,5 @@ export const assertIsEnumAddonCategoryType = (type: string): 'pickOne' | 'multip
 }
 
 export const AIEACT = assertIsEnumAddonCategoryType
+
+export const tw = create(require('../tailwind.config.js'))

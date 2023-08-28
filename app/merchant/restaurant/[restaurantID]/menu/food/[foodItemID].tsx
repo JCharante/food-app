@@ -195,7 +195,7 @@ export const EditFoodScreen = ({ }) => {
                 <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
             </View>
             <View padding-15 flex>
-                {addonCatsSelected.map((cat) => <>
+                {addonCatsSelected.map((cat) =>
                     <CardItem
                         key={cat.id}
                         color="info"
@@ -211,8 +211,8 @@ export const EditFoodScreen = ({ }) => {
                             </Text>
                         </View>
                     </CardItem>
-                </>)}
-                {addonCatsUnselected.map((cat) => <>
+                )}
+                {addonCatsUnselected.map((cat) =>
                     <CardItem
                         key={cat.id}
                         color="info"
@@ -228,7 +228,7 @@ export const EditFoodScreen = ({ }) => {
                             </Text>
                         </View>
                     </CardItem>
-                </>)}
+                )}
             </View>
         </ViewWrapper>
     </KeyboardAvoidingView>

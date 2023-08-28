@@ -3,7 +3,7 @@ import {ScrollView} from "react-native-gesture-handler";
 import { CardItem } from "../../../../../../components/CardItem";
 import {getName, getNumber, useParamFetcher} from "../../../../../../util/utilities";
 import {trpc} from "../../../../../../util/api";
-import {RefetchContext } from "../../../../../../util/hooks";
+import {RefetchContext, useRefetch} from "../../../../../../util/hooks";
 import {Stack, usePathname, useRouter } from "expo-router";
 import React, {useEffect} from "react";
 
@@ -14,22 +14,13 @@ const ViewWrapper = ({ children }) => {
     </ScrollView>
 }
 export const AllFoodsScreen = () => {
-    const { url, hasRefetched, setHasRefetched } = React.useContext(RefetchContext)
-    const pathname = usePathname();
     const navigation = useRouter()
     const { restaurantID } = useParamFetcher()
     const foodItems = trpc.getRestaurantFoodItems.useQuery({ restaurantID }, {
         staleTime: 5 * 1000 // Unit: ms
     })
 
-    useEffect(() => {
-        if (pathname === url) {
-            if (!hasRefetched && foodItems.isFetched) {
-                setHasRefetched(true)
-                foodItems.refetch().then(() => {})
-            }
-        }
-    }, [url, hasRefetched])
+    useRefetch([foodItems])
 
     if (!foodItems.data) return <ViewWrapper><Text>Loading...</Text></ViewWrapper>
 
