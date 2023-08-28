@@ -20,6 +20,7 @@ import IconPizza from "../../../assets/custom-icons/food/pizza.svg"
 import IconThai from "../../../assets/custom-icons/food/thai.svg"
 import IconVietnam from "../../../assets/custom-icons/food/vietnam.svg"
 import IconWestern from "../../../assets/custom-icons/food/western.svg"
+import GoodiesSquareLogo from "../../../assets/goodies-square-logo.svg"
 import {trpc} from "../../../util/api";
 import {useMemo} from "react";
 import {getName, tw} from "../../../util/utilities";
@@ -80,6 +81,7 @@ export default function HomeIndex() {
     const navigation = useRouter()
     const restaurantCategoriesReq = trpc.search.getRestaurantCategories.useQuery({})
     const t = useIntl()
+    const nameReq = trpc.user.userInfo.useQuery()
 
     // todo: update current language to use language from context
     const categoryElements = useMemo(() => {
@@ -101,6 +103,14 @@ export default function HomeIndex() {
         <SafeAreaView style={tw`flex flex-1`}>
             <View style={tw`flex flex-1 p-4`}>
                 <Stack.Screen options={{ title: 'Goodies.vn', headerBackVisible: false, headerShown: false }}/>
+                <View style={tw`flex flex-row`}>
+                    <View style={tw`flex flex-col`}>
+                        <Text style={tw`font-semibold text-neutral-800`}>Good morning {nameReq.data ? nameReq.data : ''}</Text>
+                        <Text style={tw`text-xs text-neutral-700`}>19 Cao Ba Quat, Ba Dinh, Ha Noi</Text>
+                    </View>
+                    <View style={tw`flex flex-1`}></View>
+                    <GoodiesSquareLogo/>
+                </View>
                 <Text style={tw`font-semibold text-lg text-neutral-900 mb-3`}>{t.formatMessage({ id: 'root.home.category' })}</Text>
                 <View style={tw`flex flex-row flex-wrap gap-3 justify-center`}>
                     {categoryElements}
