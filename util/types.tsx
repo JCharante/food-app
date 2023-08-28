@@ -1,0 +1,1 @@
+export type NameMap = { [languageCode: string]: string }

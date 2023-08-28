@@ -17,7 +17,7 @@ export const ManageRestaurantsScreen = ({ navigation }) => {
         <Text>Your Restaurants:</Text>
         <View marginT-10>
         {restaurants.data.map((restaurant) => {
-            return <Card key={restaurant._id}
+            return <Card key={restaurant._id.toString()}
                          style={{ marginBottom: 10 }}
                          row
                          height={90}

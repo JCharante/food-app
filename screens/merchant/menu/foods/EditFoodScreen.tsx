@@ -1,4 +1,4 @@
-import {View, Text, Incubator} from "react-native-ui-lib";
+import {View, Text, Incubator, Card, Button} from "react-native-ui-lib";
 import {ScrollView} from "react-native-gesture-handler";
 import {KeyboardAvoidingView} from "react-native";
 import {useContext, useEffect, useState} from "react";
@@ -10,16 +10,17 @@ import {trpc} from "../../../../util/api";
 import {inferRouterOutputs} from "@trpc/server";
 import {InternalTextField} from "../../../../components/InternalTextField";
 import {CardItem} from "../../../../components/CardItem";
+import {NameMap} from "../../../../util/types";
 
 const { TextField } = Incubator
 
 export const EditFoodScreen = ({ route }) => {
     const { foodItemID, restaurantID } = route.params
-    const [names, setNames] = useState({
+    const [names, setNames] = useState<NameMap>({
         'en': '',
         'vi': ''
     })
-    const [descriptions, setDescriptions] = useState({
+    const [descriptions, setDescriptions] = useState<NameMap>({
         'en': '',
         'vi': ''
     })
@@ -76,6 +77,14 @@ export const EditFoodScreen = ({ route }) => {
     const content = () => <KeyboardAvoidingView>
         <ScrollView>
             <View padding-15 flex>
+                <View>
+                    <Card
+                        height={200}
+                        width={200}
+                    >
+                        <Card.Image height={200} width={200} source={{ uri: foodItem.pictureURL }} />
+                    </Card>
+                </View>
                 <InternalTextField value={names['en']}
                                    label='Name in English'
                                    onChangeText={(v) => setNames({ ...names, 'en': v })}
@@ -125,7 +134,7 @@ export const EditFoodScreen = ({ route }) => {
             <View padding-15 flex>
                 {addonCatsSelected.map((cat) => <>
                     <CardItem
-                        key={cat._id}
+                        key={cat._id.toString()}
                         color="info"
                         onPress={() => {}}
                     >
@@ -142,7 +151,7 @@ export const EditFoodScreen = ({ route }) => {
                 </>)}
                 {addonCatsUnselected.map((cat) => <>
                     <CardItem
-                        key={cat._id}
+                        key={cat._id.toString()}
                         color="info"
                         onPress={() => {}}
                     >
