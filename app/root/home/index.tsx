@@ -85,12 +85,12 @@ export default function HomeIndex() {
     // todo: update current language to use language from context
     const categoryElements = useMemo(() => {
         if (restaurantCategoriesReq.data) {
-            return restaurantCategoriesReq.data.map((categoryInfo) => <View style={tw`flex flex-col w-[48px]`} key={categoryInfo.id}>
-                <View style={tw`flex flex-row`}>
+            return restaurantCategoriesReq.data.map((categoryInfo) => <View style={tw`flex flex-col w-[56px]`} key={categoryInfo.id}>
+                <View style={tw`flex flex-row justify-center`}>
                     {getIcon(categoryInfo.iconName)}
                 </View>
                 <View style={tw`flex flex-row`}>
-                    <Text>{getName(categoryInfo.names, 'en')}</Text>
+                    <Text style={tw`text-center w-full text-xs`}>{getName(categoryInfo.names, 'en')}</Text>
                 </View>
             </View>)
         } else {
@@ -99,13 +99,14 @@ export default function HomeIndex() {
     }, [restaurantCategoriesReq.data])
 
     return (
-        <SafeAreaView>
-            <ScrollView>
+        <SafeAreaView style={tw`flex flex-1`}>
+            <View style={tw`flex flex-1 p-4`}>
                 <Stack.Screen options={{ title: 'Goodies.vn', headerBackVisible: false, headerShown: false }}/>
-                <View style={tw`flex flex-row flex-wrap `}>
+                <Text style={tw`font-semibold text-lg text-neutral-900 mb-3`}>Categories</Text>
+                <View style={tw`flex flex-row flex-wrap gap-3 justify-center`}>
                     {categoryElements}
                 </View>
-            </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }
