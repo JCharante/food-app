@@ -78,6 +78,14 @@ export const UpdateMenuScreen = ({ navigation, route }) => {
                             <Text>{getName(cat.names, 'en')}</Text>
                         </View>
                         <View flex right>
+                            <Text style={{ color: 'green' }}
+                                  onPress={() => navigation.navigate('UpdateCategoryScreen', {
+                                      categoryID: cat._id,
+                                      restaurantID
+                                  })}
+                            >Edit</Text>
+                        </View>
+                        <View flex right>
                             {categoryIsOnMenu(cat._id) ?
                                 (<Text style={{ color: 'red' }}
                                     onPress={() => removeCategoryFromMenu(cat._id)}
