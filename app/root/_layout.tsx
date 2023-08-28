@@ -1,12 +1,8 @@
 import { Slot, Tabs, Stack } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons';
 
-import resolveConfig from 'tailwindcss/resolveConfig'
-import tailwindConfig from '../../tailwind.config.js'
-import {tw} from "../../util/utilities";
+import {tw, twConfig} from "../../util/utilities";
 
-// @ts-ignore
-const twConfig = resolveConfig(tailwindConfig)
 
 export default function HomeLayout() {
     return <Tabs screenOptions={{ tabBarStyle: tw`rounded-tl-2xl rounded-tr-2xl`, tabBarItemStyle: tw`p-1`}}>
